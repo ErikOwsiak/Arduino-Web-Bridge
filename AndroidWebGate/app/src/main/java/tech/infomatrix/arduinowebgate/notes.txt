@@ -1,0 +1,6 @@
+if (Build.VERSION.SDK_INT >= 23) {
+           if (checkPermission()) {
+               Log.e("permission", "Permission already granted.");
+           } else {
+               requestPermission();
+           }

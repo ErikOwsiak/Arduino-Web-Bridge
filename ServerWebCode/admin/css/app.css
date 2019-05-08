@@ -1,0 +1,37 @@
+
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	width: 100vw;
+}
+
+.hdr {
+	height: 8vh;
+	line-height: 8vh;
+	font-size: 3.4vh;
+	border-top: 1px solid #565ABB;
+	border-bottom: 1px solid #565ABB;
+	background-color: rgba(47, 36, 176, 0.16);
+}
+
+.lbl {
+	display: inline-block;
+	margin-left: 2vw;
+	font-size: 3.6vh;
+}
+
+.menu {
+	display: inline-block;
+	float: right;
+}
+
+.menu div {
+	display: inline-block;
+	margin: 0 2vw;
+	font-size: 2.4vh;
+}
+
+.menu div:hover{
+	cursor: pointer;
+}
