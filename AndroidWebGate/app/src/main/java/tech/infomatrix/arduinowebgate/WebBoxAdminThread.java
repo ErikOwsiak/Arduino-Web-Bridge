@@ -62,7 +62,6 @@ public class WebBoxAdminThread implements Runnable {
 
             /* get first line of the request from the client */
             String input = inBuff.readLine();
-            out.println(input);
 
             /* parse request with a string tokenizer */
             StringTokenizer parse = new StringTokenizer(input);
@@ -101,8 +100,8 @@ public class WebBoxAdminThread implements Runnable {
     /* all files are server from admin folder & sub folder */
     private void exeGet() throws IOException {
 
-        WebBox.appLog("\n\n --- exeGet --- ");
-        WebBox.appLog("frq: " + this.fileReq);
+        /*WebBox.appLog("\n\n --- exeGet --- ");
+        WebBox.appLog("frq: " + this.fileReq);*/
 
         /* read file */
         int contlen = 0;
@@ -110,6 +109,8 @@ public class WebBoxAdminThread implements Runnable {
         String errcode = HTTP_CODE_200;
 
         /* - - */
+        int dotpos = this.fileReq.lastIndexOf(".");
+        String fileExt =  this.fileReq.substring(dotpos);
         if (this.fileReq.equals(IDX_FILE)) {
             File f = new File(WebBox.appDir, "admin/idx.html");
             WebBox.appLog("f: " + f.getAbsolutePath());
@@ -120,7 +121,7 @@ public class WebBoxAdminThread implements Runnable {
                 errcode = HTTP_ERROR_404;
             }
             /* js files */
-        } else if (this.fileReq.endsWith(".js")) {
+        } else if (fileExt.equals(".js")) {
             contype = "text/javascript";
             File f = new File(WebBox.appDir, "admin/js/" + this.fileReq);
             WebBox.appLog("f: " + f.getAbsolutePath());
@@ -130,10 +131,19 @@ public class WebBoxAdminThread implements Runnable {
             } else {
                 errcode = HTTP_ERROR_404;
             }
-        } else if (this.fileReq.endsWith(".css")) {
+        } else if (fileExt.equals(".css")) {
             contype = "text/css";
             File f = new File(WebBox.appDir, "admin/css/" + this.fileReq);
             out.println("f: " + f.getAbsolutePath());
+            if (f.exists() && f.isFile()) {
+                this.tmpByteBuff = this.readFileBytes(f);
+                contlen = this.tmpByteBuff.length;
+            } else {
+                errcode = HTTP_ERROR_404;
+            }
+        } else if (fileExt.equals(".jpg") || fileExt.equals(".png")) {
+            contype = (fileExt.equals(".jpg")) ? "image/jpeg" : "image/png";
+            File f = new File(WebBox.appDir, "admin/imgs/" + this.fileReq);
             if (f.exists() && f.isFile()) {
                 this.tmpByteBuff = this.readFileBytes(f);
                 contlen = this.tmpByteBuff.length;
@@ -154,7 +164,7 @@ public class WebBoxAdminThread implements Runnable {
         this.hdrBuffer.flush();
 
         /* data */
-        if((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
+        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
             this.outBuff.write(this.tmpByteBuff);
 
         /* the end */
@@ -170,8 +180,6 @@ public class WebBoxAdminThread implements Runnable {
     }
 
     private void exePost() throws IOException {
-
-        out.println(this.fileReq);
 
         StringBuilder jsonOut = new StringBuilder(8000);
         jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
@@ -245,9 +253,6 @@ public class WebBoxAdminThread implements Runnable {
     }
 
     private boolean exeExe(String[] args) throws IOException {
-
-        out.println(args);
-
 
         StringBuilder jsonOut = new StringBuilder(8000);
         jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");

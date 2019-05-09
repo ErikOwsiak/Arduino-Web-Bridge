@@ -6,6 +6,13 @@ html, body {
 	width: 100vw;
 }
 
+body {
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(bg.jpg);
+}
+
 .hdr {
 	height: 8vh;
 	line-height: 8vh;
@@ -22,16 +29,86 @@ html, body {
 }
 
 .menu {
-	display: inline-block;
+	position: fixed;
+	display: none;
+	top: 2vh;
+	left: 80vw;
 	float: right;
+	border: 2px solid #8080FF;
+	border-radius: 1vh;
+	background-color: rgba(255, 255, 255, 0.88);
+	z-index: 100;
 }
 
-.menu div {
+.menu-box-hdr {
+	height: 6vh;
+	line-height: 6vh;
+	font-size: 4vh;
+	font-weight: bold;
+	text-indent: 0.5vw;
+}
+
+.menu-box-hdr div {
 	display: inline-block;
-	margin: 0 2vw;
-	font-size: 2.4vh;
 }
 
-.menu div:hover{
+.menu-x {
+	height: 6vh;
+	width: 6vh;
+	margin: 1v;
+	float: right;
+	background-size: 4vh;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(menu-x.png);
+	filter: grayscale(80%);
+}
+
+.menu-x:hover {
 	cursor: pointer;
+	filter: grayscale(0%);
+}
+
+.menu-btn {
+	display: block;
+	height: 4vh;
+	line-height: 4vh;
+	width: 18vw;
+	margin: 1vh;
+	font-size: 2.4vh;
+	text-indent: 1vw;
+	border: 1px solid #dcdcdc;
+	border-radius: 1vh;
+}
+
+.menu-btn:hover{
+	cursor: pointer;
+	border-color: #003399;
+}
+
+.btn-app-menu {
+	display: inline-block;
+	height: 6vh;
+	width: 6vh;
+	margin: 1vh;
+	float: right;
+	background-size: 4.8vh;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url(menu.png);
+}
+
+.btn-app-menu:hover {
+	cursor: pointer;
+}
+
+.view-port {
+	position: fixed;
+	top: 9vh;
+	width: 90vw;
+	height: 88vh;
+	margin-left: 5vh;
+	border-radius: 2vh;
+	border: 1px dotted #dcdcdc;
+	z-index: 80;
 }

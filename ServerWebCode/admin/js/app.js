@@ -2,15 +2,24 @@
 var app = {
 	
 	init(){
-		$(".menu > div").off().click(app.menuClick);
+		$(".menu-btn").off().click(app.menuClick);
+		$("#btnAppMenu").off().click(app.btnAppMenuClick);
+		$("#menuX").off().click(() => {
+				$("#menuBox").fadeOut();
+			});
 	},
 	
 	menuClick(){
 		try {
 			app[`${this.id}Click`]();
+			$("#menuBox").fadeOut();
 		}catch(e){
 			console.log(e);
 		}
+	},
+	
+	btnAppMenuClick(){
+		$("#menuBox").fadeIn();
 	},
 	
 	/* btnSendSms */

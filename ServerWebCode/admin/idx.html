@@ -10,13 +10,23 @@
 	<body>
 		<div class="hdr">
 			<div class="lbl">Arduino Web Bridge</div>
-			<div class="menu">
-				<div id="btnPeekUart">Peek Uart</div>
-				<div id="btnScanBluetooth">Bluetooth Devices</div>
-				<div id="btnScanUarts">Uarts</div>
-				<div id="btnPhoneDateTime">Phone DateTime</div>
-				<div id="btnSendSms">SMS</div>
+			<div id="btnAppMenu" class="btn-app-menu">
 			</div>
+		</div>
+		<!-- menu box -->
+		<div id="menuBox" class="menu">
+			<div class="menu-box-hdr">
+				<div>Main Menu</div>
+				<div id="menuX" class="menu-x"></div>
+			</div>
+			<div id="btnPeekUart" class="menu-btn">Peek Uart</div>
+			<div id="btnScanBluetooth" class="menu-btn">Bluetooth Devices</div>
+			<div id="btnScanUarts" class="menu-btn">Uarts</div>
+			<div id="btnPhoneDateTime" class="menu-btn">Phone DateTime</div>
+			<div id="btnSendSms" class="menu-btn">SMS</div>
+		</div>
+		<!-- view port -->
+		<div class="view-port">
 		</div>
 	</body>
 </html>
