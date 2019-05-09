@@ -4,6 +4,7 @@ package tech.infomatrix.arduinowebgate;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Environment;
+import android.os.WorkSource;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -11,8 +12,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
+import java.net.SocketException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static java.lang.System.out;
 
@@ -25,9 +32,11 @@ public class WebBox {
     final public static String appConfName = "app.conf";
     final public static String isFakeSD = (Environment.isExternalStorageEmulated()) ? "Yes" : "No";
 
-    public static Context ctx;
-    public static File appDir;
-    public TextView tvFeedback;
+    public static Context ctx = null;
+    public static File appDir = null;
+    public static String ipAddress = null;
+    public static Thread adminThread = null;
+    public TextView tvFeedback = null;
 
     private ServerSocket adminSocket;
 
@@ -39,22 +48,23 @@ public class WebBox {
     }
 
     public void startAdminServer() {
-        Thread t = new Thread(new Runnable() {
+        /* - - */
+        WebBox.adminThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     ServerSocket adminSocket = new ServerSocket(WebBox.adminPort);
-                    out.println(adminSocket.getLocalSocketAddress());
-                    WifiManager wm = (WifiManager)WebBox.ctx.getSystemService(Context.WIFI_SERVICE);
+                    //out.println(adminSocket.getLocalSocketAddress());
+                    WifiManager wm = (WifiManager) WebBox.ctx.getSystemService(Context.WIFI_SERVICE);
                     String msg = "Admin server started.\n" +
                             "On IP: " + adminSocket.getInetAddress().getHostAddress() + "\n" +
                             "On port : " + WebBox.adminPort + "\n" +
                             "MAC: " + wm.getConnectionInfo().getMacAddress() + "\n";
-                    out.println(msg);
+                    //out.println(msg);
                     while (true) {
-                        WebBoxAdminThread adminThread =
+                        WebBoxAdminThread adminRequestThread =
                                 new WebBoxAdminThread(adminSocket.accept());
-                        Thread t = new Thread(adminThread);
+                        Thread t = new Thread(adminRequestThread);
                         t.start();
                     }
                 } catch (IOException e) {
@@ -65,7 +75,7 @@ public class WebBox {
             }
         });
         /* - - */
-        t.start();
+        WebBox.adminThread.start();
     }
 
     public Boolean isSetup() {
@@ -142,5 +152,34 @@ public class WebBox {
 
     public static void appLog(String msg){
         out.println(msg);
+    }
+
+    public Boolean setLocalAddress() throws SocketException {
+
+        Boolean rval = false;
+        List<NetworkInterface> interfaces =
+                Collections.list(NetworkInterface.getNetworkInterfaces());
+        try {
+
+            for (NetworkInterface ni : interfaces) {
+                if (!ni.getName().equals("wlan0"))
+                    continue;
+                List<InetAddress> iads = Collections.list(ni.getInetAddresses());
+                for (InetAddress iad : iads) {
+                    if (iad.isLoopbackAddress())
+                        continue;
+                    if (iad.isSiteLocalAddress()) {
+                        WebBox.ipAddress = iad.getHostAddress();
+                        rval = true;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            WebBox.appLog(e.toString());
+        }
+
+        return rval;
+
     }
 }

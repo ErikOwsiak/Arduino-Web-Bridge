@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 import static java.lang.System.out;
 
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btnStart;
     private TextView tvFeedback;
+    private TextView tvIPAddress;
     private WebBox webBox;
     private UartGate uartGate;
 
@@ -43,26 +45,30 @@ public class MainActivity extends AppCompatActivity {
 
         /* - - */
         this.tvFeedback = (TextView) findViewById(R.id.tvFeedback);
+        this.tvIPAddress = (TextView) findViewById(R.id.tvIPAddress);
         this.btnStart = (Button) findViewById(R.id.btnStart);
 
         /* - - */
-        WebBox.ctx = this.getApplicationContext();
-        this.webBox = new WebBox();
-
-        /* - - */
-        UartGate.ctx = this.getApplicationContext();
-        this.uartGate = new UartGate();
-
-        /* - - */
         try {
+
+            /* - - */
+            WebBox.ctx = this.getApplicationContext();
+            this.webBox = new WebBox();
+
+            /* - - */
+            UartGate.ctx = this.getApplicationContext();
+            this.uartGate = new UartGate();
+
             if (this.webBox.isSetup())
                 out.println(" +++ setup done +++ ");
             else
                 this.webBox.runSetup();
-        }catch (IOException e) {
+
+        } catch (IOException e) {
+            out.println(e.toString());
+        } catch (Exception e) {
             out.println(e.toString());
         }
-
     }
 
     @Override
@@ -90,12 +96,15 @@ public class MainActivity extends AppCompatActivity {
 
     /* button click button */
     public void btnStartClick(View v) {
-        out.println("btnStartClick");
-        this.tvFeedback.setText("Running");
+        /* - - */
+        this.tvFeedback.setText("Running...");
         /* start server */
         try {
-            //this.webBox.start();
             this.webBox.startAdminServer();
+            if (this.webBox.setLocalAddress())
+                this.tvIPAddress.setText("YourIP: " + WebBox.ipAddress);
+            /* refresh */
+            v.invalidate();
         } catch (Exception e) {
             out.println("e: " + e.toString());
         }
