@@ -1,8 +1,6 @@
 
 package tech.infomatrix.arduinowebgate;
 
-import android.os.Environment;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Date;
@@ -13,10 +11,6 @@ import static java.lang.System.out;
 
 public class WebBoxAdminThread implements Runnable {
 
-    static String IDX_FILE = "/idx.html";
-    static String HTTP_ERROR_404 = "404 Page Not Found";
-    static String HTTP_CODE_200 = "200 OK";
-
     private Socket reqSocket;
 
     /* header buffer */
@@ -25,10 +19,9 @@ public class WebBoxAdminThread implements Runnable {
     /* data buffer to out sock */
     private BufferedOutputStream outBuff = null;
 
-    /* req file name */
-    private String fileReq = null;
+    /* - - */
     private byte[] tmpByteBuff;
-    //private WebBoxAdminThread ;
+    private RequestParser requestParser;
 
 
     public WebBoxAdminThread(Socket soc) {
@@ -42,8 +35,7 @@ public class WebBoxAdminThread implements Runnable {
         } catch (Exception e) {
             out.println("x1: " + e.toString());
         } finally {
-            this.cleanUP();
-            out.println("finally...");
+            out.println("run() -> finally...");
         }
     }
 
@@ -54,33 +46,23 @@ public class WebBoxAdminThread implements Runnable {
             BufferedReader inBuff =
                     new BufferedReader(new InputStreamReader(this.reqSocket.getInputStream()));
 
-            // character output stream to client (for headers)
+            /* character output stream to client (for headers) */
             this.hdrBuffer = new PrintWriter(this.reqSocket.getOutputStream());
 
             /* get binary output stream to client (for requested data) */
             this.outBuff = new BufferedOutputStream(this.reqSocket.getOutputStream());
 
-            /* get first line of the request from the client */
-            String input = inBuff.readLine();
-
-            /* parse request with a string tokenizer */
-            StringTokenizer parse = new StringTokenizer(input);
-            String method = parse.nextToken().toUpperCase();
-
-
-            /* get the HTTP method of the client
-                we get file requested */
-            this.fileReq = parse.nextToken().trim();
-            if (this.fileReq.equals("/") || this.fileReq.equals(""))
-                this.fileReq = IDX_FILE;
+            this.requestParser = new RequestParser(inBuff);
+            this.requestParser.basicParse();
 
             /* serve */
-            if (method.equals("GET")) {
+            if (this.requestParser.method.equals("GET")) {
                 exeGet();
-            } else if (method.equals("POST")) {
+            } else if (this.requestParser.method.equals("POST")) {
                 /* - - */
-                String exepath = (this.fileReq.startsWith("/")) ?
-                        this.fileReq.substring(1) : this.fileReq;
+                String exepath = (this.requestParser.requestFile.startsWith("/")) ?
+                        this.requestParser.requestFile.substring(1) :
+                        this.requestParser.requestFile;
                 /* - - */
                 String[] args = exepath.split("/");
                 if (args[0].equals("exeapi"))
@@ -93,66 +75,61 @@ public class WebBoxAdminThread implements Runnable {
             }
 
         } catch (Exception e) {
-            out.println(e);
+            out.println(e.toString());
         }
     }
 
     /* all files are server from admin folder & sub folder */
     private void exeGet() throws IOException {
 
-        /*WebBox.appLog("\n\n --- exeGet --- ");
-        WebBox.appLog("frq: " + this.fileReq);*/
-
-        /* read file */
+        /* set defaults */
         int contlen = 0;
-        String contype = "text/html";
-        String errcode = HTTP_CODE_200;
+        String contype = RequestParser.CT_HTML;
+        String errcode = RequestParser.HTTP_CODE_200;
 
         /* - - */
-        int dotpos = this.fileReq.lastIndexOf(".");
-        String fileExt =  this.fileReq.substring(dotpos);
-        if (this.fileReq.equals(IDX_FILE)) {
+        int dotpos = this.requestParser.requestFile.lastIndexOf(".");
+        String fileExt = this.requestParser.requestFile.substring(dotpos);
+        if (this.requestParser.requestFile.equals(RequestParser.IDX_FILE)) {
             File f = new File(WebBox.appDir, "admin/idx.html");
-            WebBox.appLog("f: " + f.getAbsolutePath());
             if (f.exists() && f.isFile()) {
                 this.tmpByteBuff = this.readFileBytes(f);
                 contlen = this.tmpByteBuff.length;
             } else {
-                errcode = HTTP_ERROR_404;
+                errcode = RequestParser.HTTP_ERROR_404;
             }
             /* js files */
         } else if (fileExt.equals(".js")) {
-            contype = "text/javascript";
-            File f = new File(WebBox.appDir, "admin/js/" + this.fileReq);
+            contype = RequestParser.CT_JS;
+            File f = new File(WebBox.appDir, "admin/js/" + this.requestParser.requestFile);
             WebBox.appLog("f: " + f.getAbsolutePath());
             if (f.exists() && f.isFile()) {
                 this.tmpByteBuff = this.readFileBytes(f);
                 contlen = this.tmpByteBuff.length;
             } else {
-                errcode = HTTP_ERROR_404;
+                errcode = RequestParser.HTTP_ERROR_404;
             }
         } else if (fileExt.equals(".css")) {
-            contype = "text/css";
-            File f = new File(WebBox.appDir, "admin/css/" + this.fileReq);
-            out.println("f: " + f.getAbsolutePath());
+            contype = RequestParser.CT_CSS;
+            File f = new File(WebBox.appDir, "admin/css/" + this.requestParser.requestFile);
             if (f.exists() && f.isFile()) {
                 this.tmpByteBuff = this.readFileBytes(f);
                 contlen = this.tmpByteBuff.length;
             } else {
-                errcode = HTTP_ERROR_404;
+                errcode = RequestParser.HTTP_ERROR_404;
             }
         } else if (fileExt.equals(".jpg") || fileExt.equals(".png")) {
-            contype = (fileExt.equals(".jpg")) ? "image/jpeg" : "image/png";
-            File f = new File(WebBox.appDir, "admin/imgs/" + this.fileReq);
+            contype = (fileExt.equals(".jpg")) ? RequestParser.CT_JPG : RequestParser.CT_PNG;
+            File f = new File(WebBox.appDir, "admin/imgs/" + this.requestParser.requestFile);
             if (f.exists() && f.isFile()) {
                 this.tmpByteBuff = this.readFileBytes(f);
                 contlen = this.tmpByteBuff.length;
             } else {
-                errcode = HTTP_ERROR_404;
+                errcode = RequestParser.HTTP_ERROR_404;
             }
         } else {
+            errcode = RequestParser.HTTP_ERROR_404;
             contype = "";
-            errcode = HTTP_ERROR_404;
         }
 
         /* set headers */
@@ -168,14 +145,7 @@ public class WebBoxAdminThread implements Runnable {
             this.outBuff.write(this.tmpByteBuff);
 
         /* the end */
-        byte[] thend = {'\n', '\n'};
-        this.outBuff.write(thend);
-        this.outBuff.flush();
-        this.hdrBuffer.close();
-        this.outBuff.close();
-
-        /* - - */
-        this.reqSocket.close();
+        this.theEnd();
 
     }
 
@@ -187,7 +157,7 @@ public class WebBoxAdminThread implements Runnable {
         this.tmpByteBuff = xbuff.getBytes();
 
         /* set headers */
-        this.loadBasicHeaders(HTTP_CODE_200, "text/json", xbuff.length());
+        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, xbuff.length());
 
         /* very important */
         this.hdrBuffer.append('\n');
@@ -198,15 +168,63 @@ public class WebBoxAdminThread implements Runnable {
             this.outBuff.write(this.tmpByteBuff);
 
         /* the end */
-        byte[] thend = {'\n', '\n'};
-        this.outBuff.write(thend);
-        this.outBuff.flush();
-        this.hdrBuffer.close();
-        this.outBuff.close();
+        this.theEnd();
 
-        /* - - */
-        this.reqSocket.close();
+    }
 
+    private void exeExe(String[] args) throws IOException {
+
+        StringBuilder jsonOut = new StringBuilder(8000);
+        jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
+        String xbuff = jsonOut.toString();
+        this.tmpByteBuff = xbuff.getBytes();
+
+        /* set headers */
+        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, xbuff.length());
+
+        /* very important */
+        this.hdrBuffer.append('\n');
+        this.hdrBuffer.flush();
+
+        /* data */
+        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
+            this.outBuff.write(this.tmpByteBuff);
+
+        /* the end */
+        this.theEnd();
+
+    }
+
+    private void exeApi(String[] args) throws IOException {
+
+        ApiCalls apiCalls = new ApiCalls(args, this.requestParser.postDict);
+        apiCalls.execute();
+        String apiMsg = apiCalls.apiCallFeedback.toJsonStr();
+        this.tmpByteBuff = apiMsg.getBytes();
+
+        /* set headers */
+        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, apiMsg.length());
+
+        /* very important */
+        this.hdrBuffer.append('\n');
+        this.hdrBuffer.flush();
+
+        /* data */
+        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
+            this.outBuff.write(this.tmpByteBuff);
+
+        /* the end */
+        this.theEnd();
+
+    }
+
+    private boolean loadBasicHeaders(String httpcode, String contype, int contlen) {
+        this.hdrBuffer.append(String.format("HTTP/1.1 %s\n", httpcode));
+        this.hdrBuffer.append("Server: Arudino Web Gate: 0.1\n");
+        this.hdrBuffer.append(String.format("Date: %s\n", new Date().toString()));
+        this.hdrBuffer.append(String.format("Content-type: %s\n", contype));
+        this.hdrBuffer.append(String.format("Content-length: %s\n", contlen));
+        return true;
     }
 
     private byte[] readFileBytes(File file) throws IOException {
@@ -237,81 +255,25 @@ public class WebBoxAdminThread implements Runnable {
             this.reqSocket = null;
             this.hdrBuffer = null;
             this.tmpByteBuff = null;
-            this.fileReq = "";
+            this.requestParser = null;
         }catch (IOException e) {
             e = null;
         }
     }
 
-    private boolean loadBasicHeaders(String httpcode, String contype, int contlen) {
-        this.hdrBuffer.append(String.format("HTTP/1.1 %s\n", httpcode));
-        this.hdrBuffer.append("Server: Arudino Web Gate: 0.1\n");
-        this.hdrBuffer.append(String.format("Date: %s\n", new Date().toString()));
-        this.hdrBuffer.append(String.format("Content-type: %s\n", contype));
-        this.hdrBuffer.append(String.format("Content-length: %s\n", contlen));
-        return true;
+    private void theEnd() throws IOException {
+        try {
+            byte[] thend = {'\n', '\n'};
+            this.outBuff.write(thend);
+            this.outBuff.flush();
+            this.hdrBuffer.close();
+            this.outBuff.close();
+            this.reqSocket.close();
+            /* - - */
+            this.cleanUP();
+        }catch (Exception e){
+            WebBox.appLog(e.toString());
+        }
     }
 
-    private boolean exeExe(String[] args) throws IOException {
-
-        StringBuilder jsonOut = new StringBuilder(8000);
-        jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
-        String xbuff = jsonOut.toString();
-        this.tmpByteBuff = xbuff.getBytes();
-
-        /* set headers */
-        this.loadBasicHeaders(HTTP_CODE_200, "text/json", xbuff.length());
-
-        /* very important */
-        this.hdrBuffer.append('\n');
-        this.hdrBuffer.flush();
-
-        /* data */
-        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
-            this.outBuff.write(this.tmpByteBuff);
-
-        /* the end */
-        byte[] thend = {'\n', '\n'};
-        this.outBuff.write(thend);
-        this.outBuff.flush();
-        this.hdrBuffer.close();
-        this.outBuff.close();
-
-        /* - - */
-        this.reqSocket.close();
-
-        return true;
-    }
-
-    private boolean exeApi(String[] args) throws IOException {
-
-        ApiCalls apiCalls = new ApiCalls(args);
-        apiCalls.execute();
-        String apiMsg = apiCalls.apiCallFeedback.toJsonStr();
-        this.tmpByteBuff = apiMsg.getBytes();
-
-        /* set headers */
-        this.loadBasicHeaders(HTTP_CODE_200, "text/json", apiMsg.length());
-
-        /* very important */
-        this.hdrBuffer.append('\n');
-        this.hdrBuffer.flush();
-
-        /* data */
-        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
-            this.outBuff.write(this.tmpByteBuff);
-
-        /* the end */
-        byte[] thend = {'\n', '\n'};
-        this.outBuff.write(thend);
-        this.outBuff.flush();
-        this.hdrBuffer.close();
-        this.outBuff.close();
-
-        /* - - */
-        this.reqSocket.close();
-
-        return true;
-
-    }
 }

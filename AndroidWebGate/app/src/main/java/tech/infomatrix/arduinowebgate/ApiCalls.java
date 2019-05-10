@@ -10,6 +10,7 @@ import com.google.android.material.internal.*;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -17,15 +18,17 @@ import static android.content.ContentValues.TAG;
 
 public class ApiCalls {
 
-    private String[] args;
     public ApiCallFeedback apiCallFeedback;
     public Exception apiExp;
     public static String EXP_MSG = "WrongNumberOfArgs";
 
+    private String[] args = null;
+    private Hashtable<String, String> postDict = null;
 
-    public ApiCalls(String[] args) {
-        WebBox.appLog(args.toString());
+
+    public ApiCalls(String[] args, Hashtable<String, String> postDict) {
         this.args = args;
+        this.postDict = postDict;
     }
 
     public boolean execute() {
@@ -43,11 +46,12 @@ public class ApiCalls {
     public void SendSms() {
         try {
             /* check num of args */
-            if(this.args.length != 4)
+            if((this.postDict == null) || (this.postDict.size() != 2))
                 throw new Exception(ApiCalls.EXP_MSG);
-            String tel = this.args[2];
-            String msg = URLDecoder.decode(this.args[3]);
-            WebBox.appLog(msg);
+            /* TNUM, SMSTXT */
+            String tel = this.postDict.get("TNUM");
+            String msg = this.postDict.get("SMSTXT");
+            /* - - */
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(tel, null, msg, null, null);
             this.apiCallFeedback = new ApiCallFeedback(0, "OK", "Sms Sent");

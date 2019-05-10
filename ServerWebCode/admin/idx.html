@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Arduino Web Bridge</title>
+		<link type="text/css" rel="stylesheet" href="op-boxes.css" />
 		<link type="text/css" rel="stylesheet" href="app.css" />
 		<script src="jq_3_1_1.js" charset="utf-8"></script>
 		<script src="app.js" charset="utf-8"></script>
@@ -17,7 +18,7 @@
 		<div id="menuBox" class="menu">
 			<div class="menu-box-hdr">
 				<div>Main Menu</div>
-				<div id="menuX" class="menu-x"></div>
+				<div id="menuBoxX" class="menu-x"></div>
 			</div>
 			<div id="btnPeekUart" class="menu-btn">Peek Uart</div>
 			<div id="btnScanBluetooth" class="menu-btn">Bluetooth Devices</div>
@@ -27,6 +28,22 @@
 		</div>
 		<!-- view port -->
 		<div class="view-port">
+			<div id="smsBox" class="op-box sms-box">
+				<div class="op-box-hdr">Send Sms</div>
+				<div class="op-box-ln">
+					<input type="text" id="txtTelNum" maxlength="24" 
+						placeholder="phone number" />
+				</div>
+				<div class="op-box-ln">
+					<input type="text" id="txtSMSText" maxlength="140" 
+						placeholder="sms text" />
+				</div>
+				<div class="op-box-ln">
+					<input type="button" id="btnPushSms2Fone" value="Send SMS" />
+				</div>
+				<div class="fb-box">
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

@@ -20,7 +20,7 @@ import static java.lang.System.out;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnStart;
+    private Button btnStartStop;
     private TextView tvFeedback;
     private TextView tvIPAddress;
     private WebBox webBox;
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         /* - - */
         this.tvFeedback = (TextView) findViewById(R.id.tvFeedback);
         this.tvIPAddress = (TextView) findViewById(R.id.tvIPAddress);
-        this.btnStart = (Button) findViewById(R.id.btnStart);
+        this.btnStartStop = (Button) findViewById(R.id.btnStart);
 
         /* - - */
         try {
@@ -102,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             this.webBox.startAdminServer();
             if (this.webBox.setLocalAddress())
-                this.tvIPAddress.setText("YourIP: " + WebBox.ipAddress);
+                this.tvIPAddress.setText(String.format("http://%s:%s/", WebBox.ipAddress, WebBox.adminPort));
+            this.btnStartStop.setText("Stop Admin Server");
             /* refresh */
             v.invalidate();
         } catch (Exception e) {

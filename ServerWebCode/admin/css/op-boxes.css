@@ -1,0 +1,24 @@
+
+.op-box {
+	display: none;
+	width: 60vw;
+	height: auto;
+	margin: 16vh 20vw;
+}
+
+.op-box-hdr {
+	font-size: 6vh;
+	font-weight: bold;
+}
+
+.sms-box input[type=text] {
+	width: 100%;
+	font-size: 2.8vh;
+	margin: 1vh 0;
+}
+
+#smsBox .fb-box {
+	margin-top: 6vh;
+	font-size: 3.2vh;
+	text-align: center;
+}

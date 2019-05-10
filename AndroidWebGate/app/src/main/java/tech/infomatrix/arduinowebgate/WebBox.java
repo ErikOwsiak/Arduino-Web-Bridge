@@ -53,20 +53,21 @@ public class WebBox {
             @Override
             public void run() {
                 try {
+                    /* - - */
                     ServerSocket adminSocket = new ServerSocket(WebBox.adminPort);
-                    //out.println(adminSocket.getLocalSocketAddress());
                     WifiManager wm = (WifiManager) WebBox.ctx.getSystemService(Context.WIFI_SERVICE);
                     String msg = "Admin server started.\n" +
                             "On IP: " + adminSocket.getInetAddress().getHostAddress() + "\n" +
                             "On port : " + WebBox.adminPort + "\n" +
                             "MAC: " + wm.getConnectionInfo().getMacAddress() + "\n";
-                    //out.println(msg);
+                    /* - - */
                     while (true) {
                         WebBoxAdminThread adminRequestThread =
                                 new WebBoxAdminThread(adminSocket.accept());
                         Thread t = new Thread(adminRequestThread);
                         t.start();
                     }
+                    /* - - */
                 } catch (IOException e) {
                     out.println("q0: " + e.toString());
                 } catch (Exception e) {

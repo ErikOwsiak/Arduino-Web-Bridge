@@ -2,74 +2,84 @@
 var app = {
 	
 	init(){
-		$(".menu-btn").off().click(app.menuClick);
-		$("#btnAppMenu").off().click(app.btnAppMenuClick);
-		$("#menuX").off().click(() => {
+		/* - - */
+		$(".menu-btn").click(app.menuItemClick);
+		/* - - */
+		$("#btnAppMenu").click(() => {
+				$("#menuBox").fadeIn();
+			});
+		/* - - */
+		$("#menuBoxX").click(() => {
 				$("#menuBox").fadeOut();
 			});
 	},
 	
-	menuClick(){
+	menuItemClick(){
 		try {
-			app[`${this.id}Click`]();
-			$("#menuBox").fadeOut();
+			console.log(this);
+			app.topMenu[`${this.id}Click`]();
+			$("#menuBox").fadeOut(200);
 		}catch(e){
 			console.log(e);
 		}
 	},
 	
 	btnAppMenuClick(){
-		$("#menuBox").fadeIn();
+		console.log(this);
 	},
 	
-	/* btnSendSms */
-	btnSendSmsClick(){
-		let ondone = function(txt){
-				console.log(txt);
-			};
-		console.log("send sms...");
-		let msg = encodeURIComponent("Hello, World!");
-		$.post(`/exeapi/SendSms/883279496/${msg}`, {}, ondone); 
+	topMenu: {
+		btnSendSmsClick(){
+			$("#smsBox").fadeIn(200);
+			$("#btnPushSms2Fone").off().click(app.phone.sendSmsToPhone);
+		},
+		btnPhoneDateTimeClick(){
+			console.log("btnPhoneDateTime...");
+			$.post(`/exeapi/PhoneDateTime`, {}, (txt) => { 
+					console.log(txt);
+				});
+		},
+		btnScanUartsClick(){
+			console.log("btnScanUarts...");
+			$.post(`/exeapi/ScanUarts`, {}, (jobj) => { 
+					console.log(jobj.apiReturnVal);
+					alert(jobj.apiReturnVal);
+				}); 
+		},
+		btnScanBluetoothClick(){
+			console.log("btnScanBluetooth...");
+			$.post(`/exeapi/ScanBluetooth`, {}, (jobj) => { 
+					console.log(jobj);
+					if(parseInt(jobj.apiReturnCode) != 0)
+						alert(jobj.apiReturnMsg);
+					else
+						app.processBluetoothMsg(jobj.apiReturnVal);
+				}); 
+		},
+		btnPeekUartClick(){
+			console.log("btnPeekUartClick...");
+			$.post(`/exeapi/PeekUartBuffer`, {}, (jobj) => { 
+					console.log(jobj.apiReturnVal);
+					let arr = jobj.apiReturnVal.split(";")
+					let d = new Date();
+					d.setTime(parseInt(arr[0])/1000);
+					console.log(d.toString());
+					/*if(parseInt(jobj.apiReturnCode) == 0)
+						alert(jobj.apiReturnVal);*/
+					setTimeout(app.btnPeekUartClick, 1000);
+				});
+		}
 	},
 	
-	btnPhoneDateTimeClick(){
-		console.log("btnPhoneDateTime...");
-		$.post(`/exeapi/PhoneDateTime`, {}, (txt) => { 
-				console.log(txt);
-			});
-	},
-	
-	btnScanUartsClick(){
-		console.log("btnScanUarts...");
-		$.post(`/exeapi/ScanUarts`, {}, (jobj) => { 
-				console.log(jobj.apiReturnVal);
-				alert(jobj.apiReturnVal);
-			}); 
-	},
-	
-	btnScanBluetoothClick(){
-		console.log("btnScanBluetooth...");
-		$.post(`/exeapi/ScanBluetooth`, {}, (jobj) => { 
-				console.log(jobj);
-				if(parseInt(jobj.apiReturnCode) != 0)
-					alert(jobj.apiReturnMsg);
-				else
-					app.processBluetoothMsg(jobj.apiReturnVal);
-			}); 
-	},
-	
-	btnPeekUartClick(){
-		console.log("btnPeekUartClick...");
-		$.post(`/exeapi/PeekUartBuffer`, {}, (jobj) => { 
-				console.log(jobj.apiReturnVal);
-				let arr = jobj.apiReturnVal.split(";")
-				let d = new Date();
-				d.setTime(parseInt(arr[0])/1000);
-				console.log(d.toString());
-				/*if(parseInt(jobj.apiReturnCode) == 0)
-					alert(jobj.apiReturnVal);*/
-				setTimeout(app.btnPeekUartClick, 1000);
-			});
+	phone: {
+		sendSmsToPhone(){
+			let ondone = (jobj) => {
+					$("#smsBox .fb-box").html(jobj.apiReturnVal);
+				};
+			let TNUM = $("#txtTelNum").val(),
+				SMSTXT = $("#txtSMSText").val();
+			$.post(`/exeapi/SendSms`, {TNUM, SMSTXT}, ondone);
+		}
 	},
 	
 	processBluetoothMsg(txt){
