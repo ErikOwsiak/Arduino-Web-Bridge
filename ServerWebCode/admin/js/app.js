@@ -73,8 +73,9 @@ var app = {
 	
 	phone: {
 		sendSmsToPhone(){
+			$("#smsBox div.fb-box").html("Sending SMS...");
 			let ondone = (jobj) => {
-					$("#smsBox .fb-box").html(jobj.apiReturnVal);
+					$("#smsBox div.fb-box").html(jobj.apiReturnVal);
 				};
 			let TNUM = $("#txtTelNum").val(),
 				SMSTXT = $("#txtSMSText").val();

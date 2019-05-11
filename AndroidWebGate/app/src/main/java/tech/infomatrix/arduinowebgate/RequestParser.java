@@ -17,6 +17,8 @@ public class RequestParser {
 
     static String IDX_FILE = "/idx.html";
     static String HTTP_ERROR_404 = "404 Page Not Found";
+    static String HTTP_ERROR_406 = "406 Not Acceptable";
+    static String HTTP_ERROR_500 = "500 Internal Server Error";
     static String HTTP_CODE_200 = "200 OK";
     static String CT_HTML = "text/html";
     static String CT_JSON = "text/json";
@@ -67,7 +69,7 @@ public class RequestParser {
                     this.requestBody[idx++] = ch;
                 } while (ch != (char) 0);
                 /* - - */
-                this.parsePostParams();
+                this.createPostDict();
             }
 
             /* method */
@@ -88,7 +90,7 @@ public class RequestParser {
         }
     }
 
-    private void parsePostParams(){
+    private void createPostDict(){
         String[] kv = null;
         this.postDict = new Hashtable<String, String>();
         String str = URLDecoder.decode(new String(this.requestBody));

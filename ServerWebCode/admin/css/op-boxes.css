@@ -17,7 +17,7 @@
 	margin: 1vh 0;
 }
 
-#smsBox .fb-box {
+#smsBox div.fb-box {
 	margin-top: 6vh;
 	font-size: 3.2vh;
 	text-align: center;
