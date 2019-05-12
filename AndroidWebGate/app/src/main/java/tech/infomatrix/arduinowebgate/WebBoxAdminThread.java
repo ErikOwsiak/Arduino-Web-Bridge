@@ -129,49 +129,40 @@ public class WebBoxAdminThread implements Runnable {
     }
 
     private void exePost() throws IOException {
-
+        /* todo: implement */
         StringBuilder jsonOut = new StringBuilder(8000);
         jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
         String xbuff = jsonOut.toString();
         this.tmpByteBuff = xbuff.getBytes();
-
         /* set headers */
         this.loadBasicHeaders(RequestParser.HTTP_CODE_200, MimeTypes.CT_JSON, xbuff.length());
-
         /* the end */
         this.theEnd();
-
     }
 
     private void exeExe(String[] args) throws IOException {
-
+        /* todo: implement */
         StringBuilder jsonOut = new StringBuilder(8000);
         jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
         String xbuff = jsonOut.toString();
         this.tmpByteBuff = xbuff.getBytes();
-
         /* set headers */
         this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, xbuff.length());
-
         /* the end */
         this.theEnd();
-
     }
 
     private void exeApi(String[] args) throws IOException {
-
         /* api wrapper */
         ApiCalls apiCalls = new ApiCalls(args, this.requestParser.postDict);
         apiCalls.execute();
         String apiMsg = apiCalls.apiCallFeedback.toJsonStr();
+        /* pack api response */
         this.tmpByteBuff = apiMsg.getBytes();
-
         /* set headers */
         this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, apiMsg.length());
-
         /* the end */
         this.theEnd();
-
     }
 
     private void loadBasicHeaders(String httpcode, String contype, int contlen) {

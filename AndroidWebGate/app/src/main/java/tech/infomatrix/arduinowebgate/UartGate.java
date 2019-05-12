@@ -32,6 +32,7 @@ public class UartGate {
     public static UartGate uartGate;
     public static UartGateBuffer uartBuffer;
 
+
     public UartGate() {
         UartGate.uartGate = this;
         UartGate.uartBuffer = new UartGateBuffer("bluebuff", 64);
@@ -121,21 +122,22 @@ public class UartGate {
                 try {
 
                     int idx = 0;
-                    char ch;
+                    char ch = (char)0;
                     char[] chbuff = new char[256];
 
                     while (true) {
+                        /* check for char */
+                        if (inputStream.available() == 0)
+                            continue;
                         /* read stream */
-                        if (inputStream.available() > 0) {
-                            ch = (char) inputStream.read();
-                            if (ch != '\n') {
-                                chbuff[idx++] = ch;
-                            } else {
-                                idx--;
-                                UartGate.uartBuffer.add(new String(chbuff, 0, idx));
-                                Arrays.fill(chbuff, (char) 0);
-                                idx = 0;
-                            }
+                        ch = (char) inputStream.read();
+                        if (ch != '\n') {
+                            chbuff[idx++] = ch;
+                        } else {
+                            idx--;
+                            UartGate.uartBuffer.add(new String(chbuff, 0, idx));
+                            Arrays.fill(chbuff, (char) 0);
+                            idx = 0;
                         }
                     }
 
