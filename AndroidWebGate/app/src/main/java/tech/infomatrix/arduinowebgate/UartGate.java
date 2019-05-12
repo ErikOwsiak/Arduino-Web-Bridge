@@ -84,7 +84,8 @@ public class UartGate {
         try {
             UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             BluetoothDevice bluetoothDevice = this.bluetoothDeviceByMac(mac);
-            BluetoothSocket bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+            BluetoothSocket bluetoothSocket =
+                    bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
             bluetoothSocket.connect();
             int bstate = bluetoothDevice.getBondState();
             for (ParcelUuid u : bluetoothDevice.getUuids())
@@ -96,7 +97,7 @@ public class UartGate {
             //bluetoothSocket.close();
 
         } catch (NullPointerException e) {
-            /* try to recover */
+            /* todo: try to recover */
             WebBox.appLog(e.toString());
         } catch (Exception e) {
             WebBox.appLog(e.toString());
