@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import static java.lang.String.*;
 import static java.lang.System.out;
 
 
@@ -105,7 +106,6 @@ public class WebBoxAdminThread implements Runnable {
             errcode = RequestParser.HTTP_ERROR_406;
         }
 
-
         try {
             /* read file */
             if ((reqfile != null) && (reqfile.exists()) && (reqfile.isFile())) {
@@ -121,8 +121,8 @@ public class WebBoxAdminThread implements Runnable {
 
         /* set headers */
         contype = MimeTypes.fromExt(fileExt);
-        this.loadBasicHeaders(errcode, contype, contlen);
-
+        this.loadResponseHeaders(errcode, contype, contlen);
+        this.loadResponseBody();
         /* the end */
         this.theEnd();
 
@@ -135,21 +135,29 @@ public class WebBoxAdminThread implements Runnable {
         String xbuff = jsonOut.toString();
         this.tmpByteBuff = xbuff.getBytes();
         /* set headers */
-        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, MimeTypes.CT_JSON, xbuff.length());
+        this.loadResponseHeaders(RequestParser.HTTP_CODE_200, MimeTypes.CT_JSON, xbuff.length());
+        this.loadResponseBody();
         /* the end */
         this.theEnd();
     }
 
     private void exeExe(String[] args) throws IOException {
-        /* todo: implement */
-        StringBuilder jsonOut = new StringBuilder(8000);
-        jsonOut.append("{\"AruWebGate\": {\"p1\": 9, \"p2\": 8}}");
-        String xbuff = jsonOut.toString();
-        this.tmpByteBuff = xbuff.getBytes();
-        /* set headers */
-        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, xbuff.length());
-        /* the end */
-        this.theEnd();
+        try {
+            ExeCalls exeCalls = new ExeCalls(args, this.requestParser.postDict);
+            exeCalls.execute();
+            assert exeCalls.callFeedback != null;
+            String callMsg = exeCalls.callFeedback.toJsonStr();
+            this.tmpByteBuff = callMsg.getBytes();
+            /* set headers */
+            this.loadResponseHeaders(RequestParser.HTTP_CODE_200, MimeTypes.CT_JSON, callMsg.length());
+            this.loadResponseBody();
+            /* the end */
+            this.theEnd();
+        } catch (NullPointerException e) {
+            WebBox.appLog(e.toString());
+        } catch (Exception e) {
+            WebBox.appLog(e.toString());
+        }
     }
 
     private void exeApi(String[] args) throws IOException {
@@ -160,26 +168,45 @@ public class WebBoxAdminThread implements Runnable {
         /* pack api response */
         this.tmpByteBuff = apiMsg.getBytes();
         /* set headers */
-        this.loadBasicHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, apiMsg.length());
+        this.loadResponseHeaders(RequestParser.HTTP_CODE_200, RequestParser.CT_JSON, apiMsg.length());
+        this.loadResponseBody();
         /* the end */
         this.theEnd();
     }
 
-    private void loadBasicHeaders(String httpcode, String contype, int contlen) {
-        this.hdrBuffer.append(String.format("HTTP/1.1 %s\n", httpcode));
-        this.hdrBuffer.append("Server: Arudino Web Gate: 0.1\n");
-        this.hdrBuffer.append(String.format("Date: %s\n", new Date().toString()));
-        this.hdrBuffer.append(String.format("Content-type: %s\n", contype));
-        this.hdrBuffer.append(String.format("Content-length: %s\n", contlen));
+    private void loadResponseHeaders(String httpcode, String contype, int contlen) {
+        /* load all headers here */
+        this.hdrBuffer.append(format("HTTP/1.1 %s\r\n", httpcode));
+        this.hdrBuffer.append("Server: Arudino Web Gate v0.1\r\n");
+        this.hdrBuffer.append(format("Date: %s\r\n", new Date().toString()));
+        this.hdrBuffer.append(format("Content-type: %s\r\n", contype));
+        this.hdrBuffer.append(format("Content-length: %s\r\n", contlen));
+        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebBox.devMaker));
+        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebBox.devModel));
+        this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
+                format("devMaker=%s;", WebBox.devMaker)));
+        this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
+                format(" devModel=%s;", WebBox.devModel)));
+        /* headers - body spacer */
+        this.hdrBuffer.append("\r\n");
+        this.hdrBuffer.flush();
+    }
+
+    private void loadResponseBody() throws  IOException {
+        /* data */
+        if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
+            this.dataBuff.write(this.tmpByteBuff);
+        /* mark end */
+        this.dataBuff.write(new byte[]{'\r', '\n', '\r', '\n'});
+        this.dataBuff.flush();
     }
 
     private byte[] readFileBytes(File file) throws IOException {
-
+        byte[] bytes = null;
         FileInputStream fis = null;
-        int byteCount = (int) file.length();
-        byte[] bytes = new byte[byteCount];
-
         try {
+            int byteCount = (int) file.length();
+            bytes = new byte[byteCount];
             fis = new FileInputStream(file);
             fis.read(bytes);
         } catch (IOException e) {
@@ -188,23 +215,12 @@ public class WebBoxAdminThread implements Runnable {
             if (fis != null)
                 fis.close();
         }
-
         /* - - */
         return bytes;
-
     }
 
     private void theEnd() throws IOException {
         try {
-            /* headers & very important */
-            this.hdrBuffer.append('\n');
-            this.hdrBuffer.flush();
-            /* data */
-            if ((this.tmpByteBuff != null) && (this.tmpByteBuff.length > 0))
-                this.dataBuff.write(this.tmpByteBuff);
-            /* mark end */
-            this.dataBuff.write(new byte[]{'\n', '\n'});
-            this.dataBuff.flush();
             /* close */
             this.hdrBuffer.close();
             this.dataBuff.close();

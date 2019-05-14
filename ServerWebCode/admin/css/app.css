@@ -86,6 +86,15 @@ body {
 	border-color: #003399;
 }
 
+.dev-str {
+	display: inline-block;
+	font-size: 2vh;
+	font-weight: bold;
+	text-indent: 2vw;
+	color: #808080;
+	text-transform: uppercase;
+}
+
 .btn-app-menu {
 	display: inline-block;
 	height: 6vh;

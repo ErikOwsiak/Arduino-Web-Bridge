@@ -3,6 +3,7 @@ package tech.infomatrix.arduinowebgate;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.WorkSource;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ import static java.lang.System.out;
 public class WebBox {
 
     final public static int adminPort = 8020;
+    final public static String devMaker = Build.MANUFACTURER;
+    final public static String devModel = android.os.Build.MODEL;
     final public static File extDir = Environment.getExternalStorageDirectory();
     final public static String appDirName = "ArduWebBox";
     final public static String appConfName = "app.conf";
@@ -112,7 +115,7 @@ public class WebBox {
                 String[] sdirs = {"admin", "js", "css", "exe"};
                 for (String s : sdirs) {
                     File f = new File(WebBox.appDir, s);
-                    if(f.mkdir())
+                    if (f.mkdir())
                         f.setWritable(true);
                 }
                 /* admin dir */
@@ -146,12 +149,12 @@ public class WebBox {
                 out.println("app conf not found");
         } catch (IOException e) {
             out.println(e.toString());
-        }catch (Exception e) {
+        } catch (Exception e) {
             out.println(e.toString());
         }
     }
 
-    public static void appLog(String msg){
+    public static void appLog(String msg) {
         out.println(msg);
     }
 

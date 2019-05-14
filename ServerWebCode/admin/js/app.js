@@ -1,7 +1,12 @@
 
 var app = {
 	
+	cookieJar: {},
+	vp: null,
+	
 	init(){
+		/* - - */
+		app.vp = $("#viewPort");
 		/* - - */
 		$(".menu-btn").click(app.menuItemClick);
 		/* - - */
@@ -12,13 +17,16 @@ var app = {
 		$("#menuBoxX").click(() => {
 				$("#menuBox").fadeOut();
 			});
+		/* - - */
+		app.loadCookies();
+		let {devMaker, devModel} = app.cookieJar;
+		$("#devStr").html(`${devMaker} : ${devModel}`);
 	},
 	
 	menuItemClick(){
 		try {
-			console.log(this);
+			$("#menuBox").fadeOut(100);
 			app.topMenu[`${this.id}Click`]();
-			$("#menuBox").fadeOut(200);
 		}catch(e){
 			console.log(e);
 		}
@@ -30,42 +38,34 @@ var app = {
 	
 	topMenu: {
 		btnSendSmsClick(){
-			$("#smsBox").fadeIn(200);
-			$("#btnPushSms2Fone").off().click(app.phone.sendSmsToPhone);
+			app.vp.html(HtmlT.smsBox);
+			$("#smsBox").fadeIn();
+			$("#btnPushSms2Fone").click(app.phone.sendSmsToPhone);
 		},
 		btnPhoneDateTimeClick(){
-			console.log("btnPhoneDateTime...");
 			$.post(`/exeapi/PhoneDateTime`, {}, (txt) => { 
 					console.log(txt);
 				});
 		},
 		btnScanUartsClick(){
-			console.log("btnScanUarts...");
 			$.post(`/exeapi/ScanUarts`, {}, (jobj) => { 
-					console.log(jobj.apiReturnVal);
 					alert(jobj.apiReturnVal);
 				}); 
 		},
 		btnScanBluetoothClick(){
-			console.log("btnScanBluetooth...");
-			$.post(`/exeapi/ScanBluetooth`, {}, (jobj) => { 
-					console.log(jobj);
+			$(".op-box").fadeOut();
+			$.post(`/exeapi/ScanBluetooth`, {}, (jobj) => {
 					if(parseInt(jobj.apiReturnCode) != 0)
 						alert(jobj.apiReturnMsg);
 					else
 						app.processBluetoothMsg(jobj.apiReturnVal);
-				}); 
+				});
 		},
 		btnPeekUartClick(){
-			console.log("btnPeekUartClick...");
-			$.post(`/exeapi/PeekUartBuffer`, {}, (jobj) => { 
-					console.log(jobj.apiReturnVal);
-					let arr = jobj.apiReturnVal.split(";")
-					let d = new Date();
+			$.post(`/exeapi/PeekUartBuffer`, {}, (jobj) => {
+					let d = new Date(),
+						arr = jobj.apiReturnVal.split(";");
 					d.setTime(parseInt(arr[0])/1000);
-					console.log(d.toString());
-					/*if(parseInt(jobj.apiReturnCode) == 0)
-						alert(jobj.apiReturnVal);*/
 					setTimeout(app.btnPeekUartClick, 1000);
 				});
 		}
@@ -78,15 +78,38 @@ var app = {
 					$("#smsBox div.fb-box").html(jobj.apiReturnVal);
 				};
 			let TNUM = $("#txtTelNum").val(),
-				SMSTXT = $("#txtSMSText").val();
+					SMSTXT = $("#txtSMSText").val();
 			$.post(`/exeapi/SendSms`, {TNUM, SMSTXT}, ondone);
 		}
 	},
 	
+	//$("#blueDevs, #blueDevs .blue-devs-lst").fadeIn();
 	processBluetoothMsg(txt){
-		let arr = txt.trim().split("|");
-		console.log(arr);
-		alert(arr.join("\n"));
+		app.vp.html(HtmlT.blueDevs);
+		$("#blueDevs").fadeIn();
+		let html= "", arr = txt.trim().split("|");
+		$("#blueDevs .blue-devs-lst").html("");
+		arr.forEach((str) => {
+				if(!str)
+					return;
+				html = HtmlT.blueDevItem(str.split(";"));
+				$("#blueDevs .blue-devs-lst").append(html);
+			});
+		/* - - */
+		$(".blue-dev-item").off().click(bt.click);
+	},
+	
+	loadCookies(){
+		let t = null,
+			arr = document.cookie.split(";");
+		arr.forEach((kv) => {
+				t = kv.split("=");
+				app.cookieJar[t[0].trim()] = t[1].trim();
+			}); 
+	},
+	
+	cookie(key){
+		return app.cookieJar[key];
 	}
 	
 };

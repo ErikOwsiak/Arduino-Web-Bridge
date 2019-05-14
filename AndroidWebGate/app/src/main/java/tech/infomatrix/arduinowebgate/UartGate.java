@@ -38,27 +38,20 @@ public class UartGate {
         UartGate.uartBuffer = new UartGateBuffer("bluebuff", 64);
     }
 
-    public String wget(){
-
+    public String wget() {
         return "";
     }
 
     public String listUsbDevices() {
-
         UsbManager manager = (UsbManager) UartGate.ctx.getSystemService(Context.USB_SERVICE);
-
         HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-
         if (deviceList.isEmpty())
             return "NoUsbDevicesFound";
-
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-
         while (deviceIterator.hasNext()) {
             UsbDevice device = deviceIterator.next();
             out.println(device);
         }
-
         return null;
     }
 
@@ -104,6 +97,8 @@ public class UartGate {
         }
     }
 
+
+
     private BluetoothDevice bluetoothDeviceByMac(String mac){
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
@@ -116,7 +111,6 @@ public class UartGate {
     }
 
     private void startReadBlueUart(final InputStream inputStream) {
-
         Thread readThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -147,9 +141,7 @@ public class UartGate {
                 }
             }
         });
-
         /* - - */
         readThread.start();
-
     }
 }

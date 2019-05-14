@@ -5,15 +5,20 @@
 		<title>Arduino Web Bridge</title>
 		<link type="text/css" rel="stylesheet" href="op-boxes.css" />
 		<link type="text/css" rel="stylesheet" href="app.css" />
-		<script src="jq_3_1_1.js" charset="utf-8"></script>
+		<script src="jq.js" charset="utf-8"></script>
+		<script src="bt.js" charset="utf-8"></script>
+		<script src="html.js" charset="utf-8"></script>
 		<script src="app.js" charset="utf-8"></script>
 	</head>
 	<body>
+		
 		<div class="hdr">
 			<div class="lbl">Arduino Web Bridge</div>
+			<div id="devStr" class="dev-str"></div>
 			<div id="btnAppMenu" class="btn-app-menu">
 			</div>
 		</div>
+		
 		<!-- menu box -->
 		<div id="menuBox" class="menu">
 			<div class="menu-box-hdr">
@@ -26,24 +31,10 @@
 			<div id="btnPhoneDateTime" class="menu-btn">Phone DateTime</div>
 			<div id="btnSendSms" class="menu-btn">SMS</div>
 		</div>
+		
 		<!-- view port -->
-		<div class="view-port">
-			<div id="smsBox" class="op-box sms-box">
-				<div class="op-box-hdr">Send Sms</div>
-				<div class="op-box-ln">
-					<input type="text" id="txtTelNum" maxlength="24" 
-						placeholder="phone number" />
-				</div>
-				<div class="op-box-ln">
-					<input type="text" id="txtSMSText" maxlength="140" 
-						placeholder="sms text" />
-				</div>
-				<div class="op-box-ln">
-					<input type="button" id="btnPushSms2Fone" value="Send SMS" />
-				</div>
-				<div class="fb-box">
-				</div>
-			</div>
+		<div id="viewPort" class="view-port">
 		</div>
+		
 	</body>
 </html>

@@ -3,12 +3,19 @@
 	display: none;
 	width: 60vw;
 	height: auto;
-	margin: 16vh 20vw;
+	margin: 14vh 20vw;
 }
 
 .op-box-hdr {
 	font-size: 6vh;
 	font-weight: bold;
+	color: #6F6F6F;
+}
+
+.loading-data {
+	height: 8vh;
+	width: 80%;
+	border: 1px dotted red;
 }
 
 .sms-box input[type=text] {
@@ -21,4 +28,27 @@
 	margin-top: 6vh;
 	font-size: 3.2vh;
 	text-align: center;
+}
+
+.blue-dev-item {
+	width: 80%;
+	border-radius: 1vh;
+	border: 2px solid #dcdcdc;
+	margin: 1vh auto;
+	padding: 1vh;
+}
+
+.blue-dev-item:hover {
+	border-color: green;
+	cursor: pointer;
+}
+
+.blue-dev-item div:nth-child(1){
+	font-size: 2.8vh;
+	text-indent: 1vw;
+}
+
+.blue-dev-item div:nth-child(2){
+	font-size: 3.6vh;
+	text-indent: 1.6vw;
 }
