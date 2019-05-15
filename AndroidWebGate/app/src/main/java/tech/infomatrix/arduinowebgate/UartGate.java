@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.ParcelUuid;
+import android.renderscript.Script;
 import android.util.Pair;
 import android.database.sqlite.*;
 
@@ -40,6 +41,7 @@ public class UartGate {
     public static UartGate uartGate;
     public static Hashtable<String, UartGateBuffer> uartInBuffers;
     public static Hashtable<String, Thread> uartThreads;
+    public static Hashtable<String, BluetoothSocket> bluetoothSockets;
     private static String sppUUID = "00001101-0000-1000-8000-00805f9b34fb";
 
 
@@ -47,6 +49,7 @@ public class UartGate {
         UartGate.uartGate = this;
         UartGate.uartInBuffers = new Hashtable<String, UartGateBuffer>();
         UartGate.uartThreads = new Hashtable<String, Thread>();
+        UartGate.bluetoothSockets = new Hashtable<String, BluetoothSocket>();
     }
 
     public String wget() {
@@ -87,25 +90,6 @@ public class UartGate {
     public void bluetoothDeviceInfo(String mac) {
         try {
 
-            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-            /*BluetoothDevice bluetoothDevice = this.bluetoothDeviceByMac(mac);
-            BluetoothSocket bluetoothSocket =
-                    bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-
-            bluetoothSocket.connect();
-            int bstate = bluetoothDevice.getBondState();
-
-            for (ParcelUuid u : bluetoothDevice.getUuids())
-                WebBox.appLog(u.toString());
-
-            OutputStream outputStream = bluetoothSocket.getOutputStream();
-            InputStream inputStream = bluetoothSocket.getInputStream();*/
-
-            /* - - */
-            //this.startBlueDevice(inputStream);
-            //beginListenForData();
-            //bluetoothSocket.close();
-
         } catch (NullPointerException e) {
             /* todo: try to recover */
             WebBox.appLog(e.toString());
@@ -127,12 +111,16 @@ public class UartGate {
 
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(mac);
+            assert bluetoothDevice != null;
             BluetoothSocket bluetoothSocket =
                     bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+            assert bluetoothSocket != null;
             bluetoothSocket.connect();
+            UartGate.bluetoothSockets.put(mac, bluetoothSocket);
 
             outputStream = bluetoothSocket.getOutputStream();
             inputStream = bluetoothSocket.getInputStream();
+            assert ((outputStream != null) && (inputStream != null));
 
         } catch (NullPointerException e) {
             /* todo: try to recover */
@@ -154,14 +142,15 @@ public class UartGate {
         /* start thread */
         Thread readThread = new Thread(new Runnable() {
 
-            public boolean RUN = true;
-
             @Override
             public void run() {
+
+                UartGateBuffer uartGateBuffer = null;
+
                 try {
 
                     /* add read buffer */
-                    UartGateBuffer uartGateBuffer = new UartGateBuffer(key,0);
+                    uartGateBuffer = new UartGateBuffer(key, 0);
                     UartGate.uartInBuffers.put(key, uartGateBuffer);
 
                     int idx = 0;
@@ -169,7 +158,7 @@ public class UartGate {
                     char[] chbuff = new char[256];
 
                     /* thread loop */
-                    while (this.RUN) {
+                    while (true) {
                         /* check for char */
                         if (inputStream.available() == 0)
                             continue;
@@ -182,13 +171,30 @@ public class UartGate {
                             Arrays.fill(chbuff, (char) 0);
                             idx = 0;
                         }
+                        /* check thread */
+                        if (Thread.currentThread().isInterrupted()) {
+                            inputStream.close();
+                            break;
+                        }
                     }
 
-                    /* close here */
-                    uartGateBuffer.close();
 
                 } catch (IOException e) {
                     WebBox.appLog(e.toString());
+                } catch (ThreadDeath e) {
+                    WebBox.appLog(e.toString());
+                } catch (Exception e) {
+                    WebBox.appLog(e.toString());
+                } finally {
+                    /* make sure */
+                    if (uartGateBuffer != null)
+                        uartGateBuffer.close();
+                    try {
+                        if (inputStream != null)
+                            inputStream.close();
+                    } catch (IOException e) {
+                        WebBox.appLog(e.toString());
+                    }
                 }
             }
 

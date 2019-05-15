@@ -7,7 +7,7 @@
 }
 
 .op-box-hdr {
-	font-size: 6vh;
+	font-size: 4.8vh;
 	font-weight: bold;
 	color: #6F6F6F;
 }
@@ -62,7 +62,7 @@
 	display: inline-block;
 	width: 60%;
 	height: 40vh;
-	border: 1px solid red;
+	border: 1px dotted #dcdcdc;
 	vertical-align: top;
 }
 
@@ -76,4 +76,21 @@
 	vertical-align: top;
 	overflow-y: scroll;
 	
+}
+
+#blueDevScan input[type=button] {
+	height: 6vh;
+	width: 8vw;
+	font-size: 2.4vh;
+	margin: 2vh;
+	border-radius: 1vh;
+	border: 2px solid #403662;
+}
+
+#btnStartStop {
+	color: green;
+}
+
+#btnConnectDisconnect {
+	color: green;
 }

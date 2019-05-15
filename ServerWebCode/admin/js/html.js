@@ -28,9 +28,10 @@ var HtmlT = {
 	},
 	
 	blueDevReader(i){
-		let title = i,
-			btn = `<div><input id="btnReadBlueDev" type="button" value="Start Read" />` + 
-				`<input id="btnStopReadBlueDev" type="button" value="Stop Read" /></div>`;
+		let title = `MAC&nbsp;${i}`,
+			btn = `<div><input bits="0" id="btnConnectDisconnect" type="button" value="Connect" />` +
+				`<input mode="start" id="btnStartStop" type="button" value="Start Read" />` + 
+				`<input id="btnClearRead" type="button" value="Clear Read" /></div>`;
 		return `<div id="blueDevScan" class="op-box">` + 
 			`<div class="col-left"><div class="op-box-hdr">${title}</div>` + 
 			`<div class="blue-dev-btns">${btn}</div></div>` +
