@@ -22,10 +22,10 @@ public class RequestParser {
     static String HTTP_CODE_200 = "200 OK";
     static String CT_HTML = "text/html";
     static String CT_JSON = "text/json";
-    static String CT_CSS = "text/css";
+    /*static String CT_CSS = "text/css";
     static String CT_JPG = "image/jpeg";
     static String CT_PNG = "image/png";
-    static String CT_JS = "text/javascript";
+    static String CT_JS = "text/javascript";*/
     static int CONTENT_LENGTH = 0;
 
     public List<String> requestHeaders;
@@ -33,6 +33,7 @@ public class RequestParser {
     public Hashtable<String, String> postDict;
     public String method;
     public String requestFile;
+    public int errorCount = 0;
 
     private BufferedReader bufferedReader;
 
@@ -87,16 +88,23 @@ public class RequestParser {
 
         } catch (Exception e) {
             WebBox.appLog(e.toString());
+            this.errorCount++;
         }
     }
 
-    private void createPostDict(){
-        String[] kv = null;
-        this.postDict = new Hashtable<String, String>();
-        String str = URLDecoder.decode(new String(this.requestBody));
-        for(String s : str.split("&")) {
-            kv = s.split("=");
-            this.postDict.put(kv[0], kv[1]);
+    private void createPostDict() {
+        try {
+            String[] kv = null;
+            this.postDict = new Hashtable<String, String>();
+            String str = URLDecoder.decode(new String(this.requestBody));
+            for (String s : str.split("&")) {
+                kv = s.split("=");
+                this.postDict.put(kv[0], kv[1]);
+            }
+        } catch (Exception e) {
+            WebBox.appLog(e.toString());
+            this.postDict = null;
+            this.errorCount++;
         }
     }
 

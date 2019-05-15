@@ -112,7 +112,7 @@ public class WebBox {
             if (WebBox.appDir.mkdir()) {
                 out.println(WebBox.appDir + " : Created");
                 /* app dir */
-                String[] sdirs = {"admin", "js", "css", "exe"};
+                String[] sdirs = {"admin", "js", "css", "exe", "data"};
                 for (String s : sdirs) {
                     File f = new File(WebBox.appDir, s);
                     if (f.mkdir())

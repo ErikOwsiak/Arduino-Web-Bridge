@@ -52,3 +52,28 @@
 	font-size: 3.6vh;
 	text-indent: 1.6vw;
 }
+
+#blueDevScan {
+	width: 80% !IMPORTANT;
+	margin-left: 8vw !IMPORTANT;
+}
+
+#blueDevScan .col-left {
+	display: inline-block;
+	width: 60%;
+	height: 40vh;
+	border: 1px solid red;
+	vertical-align: top;
+}
+
+#blueDevScan .col-right {
+	display: inline-block;
+	width: 38%;
+	height: 68vh;
+	margin-left: 1%;
+	border-radius: 1vh;
+	border: 2px solid #808080;
+	vertical-align: top;
+	overflow-y: scroll;
+	
+}

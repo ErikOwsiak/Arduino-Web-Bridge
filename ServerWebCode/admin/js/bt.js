@@ -3,6 +3,8 @@ var bt = {
 
 	name: null,
 	adr: null,
+	ADR: null,
+	readTimeOut: null,
 
 	init(n, a){
 		bt.name = n;
@@ -19,23 +21,30 @@ var bt = {
 		app.vp.html(html);
 		$("#blueDevScan").fadeIn();
 		bt.startBlueDevBuffer(adr);
-		/*$("#blueDevs .blue-devs-lst").fadeOut();
-		$("#blueDevs .bt-scan").fadeIn();*/
 	},
 	
 	startBlueDevBuffer(ADR){
+		bt.ADR = ADR;
 		$.post(`/exe/StartBlueDev`, {ADR}, (jobj) => {
-				console.log(job);
+				console.log(jobj);
+				$("#btnReadBlueDev").off().click(bt.readBlueDevBuffer);
+				$("#btnStopReadBlueDev").off().click(bt.stopReadBlueDevBuffer);
 			});
 	},
 	
 	readBlueDevBuffer(){
-		$.post(`/exe/PeekUartBuffer`, {}, (jobj) => {
-				let d = new Date(),
-					arr = jobj.apiReturnVal.split(";");
-				d.setTime(parseInt(arr[0])/1000);
-				setTimeout(app.btnPeekUartClick, 1000);
+		/* - - */
+		$.post(`/exe/ReadBlueDevBuffer`, {"ADR": bt.ADR}, (jobj) => {
+				let html = HtmlT.uartMsg(jobj);
+				$("#colRight").append(html);
+				bt.readTimeOut = setTimeout(bt.readBlueDevBuffer, 800);
 			});
+		/* - - */
+	},
+	
+	stopReadBlueDevBuffer(){
+		$("#blueDevScan .col-right").html("");
+		clearTimeout(bt.readTimeOut);
 	}
 	
 };

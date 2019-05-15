@@ -79,9 +79,9 @@ public class ApiCalls {
     }
 
     public void PeekUartBuffer(){
-        UartMsg msg = UartGate.uartBuffer.read();
+        /*UartMsg msg = UartGate.uartBuffer.read();
         String strmsg = (msg == null) ? "NoData" : msg.toString();
-        this.apiCallFeedback = new ApiCallFeedback(0, "OK", strmsg);
+        this.apiCallFeedback = new ApiCallFeedback(0, "OK", strmsg);*/
     }
 
 }

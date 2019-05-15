@@ -42,7 +42,7 @@ public class WebBoxAdminThread implements Runnable {
         }
     }
 
-    private void processRequest() {
+    private void processRequest() throws IOException {
         try {
 
             /* read chars from the client via input stream on the socket */
@@ -57,6 +57,8 @@ public class WebBoxAdminThread implements Runnable {
 
             this.requestParser = new RequestParser(inBuff);
             this.requestParser.basicParse();
+            if (this.requestParser.errorCount > 0)
+                WebBox.appLog("ParserErrors :(");
 
             /* serve */
             if (this.requestParser.method.equals("GET")) {
@@ -79,6 +81,9 @@ public class WebBoxAdminThread implements Runnable {
 
         } catch (Exception e) {
             out.println(e.toString());
+            /* todo: push to 500 page */
+            this.send2ErrorPage();
+
         }
     }
 
@@ -190,6 +195,24 @@ public class WebBoxAdminThread implements Runnable {
         /* headers - body spacer */
         this.hdrBuffer.append("\r\n");
         this.hdrBuffer.flush();
+    }
+
+    private void send2ErrorPage() throws IOException {
+        /* load all headers here */
+        this.hdrBuffer.append(format("HTTP/1.1 %s\r\n", RequestParser.HTTP_ERROR_500));
+        this.hdrBuffer.append("Server: Arudino Web Gate v0.1\r\n");
+        this.hdrBuffer.append(format("Date: %s\r\n", new Date().toString()));
+        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebBox.devMaker));
+        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebBox.devModel));
+        this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
+                format("devMaker=%s;", WebBox.devMaker)));
+        this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
+                format(" devModel=%s;", WebBox.devModel)));
+        /* headers - body spacer */
+        this.hdrBuffer.append("\r\n");
+        this.hdrBuffer.flush();
+        /* - - */
+        this.theEnd();
     }
 
     private void loadResponseBody() throws  IOException {

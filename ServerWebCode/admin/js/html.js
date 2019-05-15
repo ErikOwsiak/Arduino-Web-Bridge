@@ -16,8 +16,7 @@ var HtmlT = {
 				`<input type="text" id="txtSMSText" maxlength="140" placeholder="sms text" /></div>` + 
 			`<div class="op-box-ln">` +
 				`<input type="button" id="btnPushSms2Fone" value="Send SMS" /></div>` +
-			`<div class="fb-box">` +
-			`</div></div>`;
+			`<div class="fb-box"></div></div>`;
 	},
 	
 	get blueDevs(){	
@@ -29,11 +28,23 @@ var HtmlT = {
 	},
 	
 	blueDevReader(i){
-		let title = i;
+		let title = i,
+			btn = `<div><input id="btnReadBlueDev" type="button" value="Start Read" />` + 
+				`<input id="btnStopReadBlueDev" type="button" value="Stop Read" /></div>`;
 		return `<div id="blueDevScan" class="op-box">` + 
-			`<div class="op-box-hdr">${title}</div>` +
-			`<div class="scan-list"></div></div>`;
-		
+			`<div class="col-left"><div class="op-box-hdr">${title}</div>` + 
+			`<div class="blue-dev-btns">${btn}</div></div>` +
+			`<div id="colRight" class="col-right"></div></div>`;	
+	},
+	
+	uartMsg(i){
+		let str = i.returnVal.split(";")[0]; 
+			ts = parseInt(str), d = new Date();
+		d.setTime(ts);
+		return `<div class="uart-msg"><div>dts:&nbsp;${d.toLocaleString()}</div>` + 
+			`<div>returnCode:&nbsp;${i.returnCode}</div>` + 
+			`<div>returnMsg:&nbsp;${i.returnMsg}</div>` + 
+			`<div>returnVal:&nbsp;${i.returnVal}</div></div>`;
 	}
 	
 };
