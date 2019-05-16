@@ -28,13 +28,13 @@ var HtmlT = {
 	},
 	
 	blueDevReader(i){
-		let title = `MAC&nbsp;${i}`,
-			btn = `<div><input bits="0" id="btnConnectDisconnect" type="button" value="Connect" />` +
-				`<input mode="start" id="btnStartStop" type="button" value="Start Read" />` + 
+		let title = `<i>MAC</i>&nbsp;${i}`,
+			btns = `<div><input bits="0" id="btnConnectDisconnect" type="button" value="Connect" />` +
+				`<input type="button" mode="start" id="btnStartStop" class="btn-off" value="Start Reading" disabled />` + 
 				`<input id="btnClearRead" type="button" value="Clear Read" /></div>`;
 		return `<div id="blueDevScan" class="op-box">` + 
 			`<div class="col-left"><div class="op-box-hdr">${title}</div>` + 
-			`<div class="blue-dev-btns">${btn}</div></div>` +
+			`<div class="blue-dev-btns">${btns}</div><div class="fb-box-a"></div></div>` +
 			`<div id="colRight" class="col-right"></div></div>`;	
 	},
 	

@@ -35,8 +35,11 @@ var bt = {
 	connectDisconnect(){
 		let refThis = this;
 		let ondone = function(jobj){
+				$(refThis).removeClass("btn-off");
 				$(refThis).removeAttr("disabled");
-				if(jobj.returnVal == "ReaderStarted"){
+				$("#blueDevScan .fb-box-a").html(jobj.returnVal);
+				if(jobj.returnVal == "Connected"){
+					bt.btnStartStopActive();
 					$("#btnConnectDisconnect").val("Disconnect");
 					$("#btnConnectDisconnect").css("color", "red");
 				}else{
@@ -45,7 +48,8 @@ var bt = {
 				}
 			};
 		let bits = parseInt($(this).attr("bits")),
-			url = (bits == 0) ? `/exe/StartBlueDev` : `/exe/StopBlueDev`;
+			url = (bits == 0) ? `/exe/ConnectBlueDev` : `/exe/DisconnectBlueDev`;
+		$(this).addClass("btn-off");
 		$(this).attr("disabled", "1");
 		$(this).attr("bits", (bits == 0) ? 1 : 0);
 		$.post(url, {"ADR": bt.ADR}, ondone);
@@ -63,7 +67,7 @@ var bt = {
 	startReader(){
 		$("#btnStartStop").attr("mode", "stop");
 		$("#btnStartStop").css("color", "red");
-		$("#btnStartStop").val("Stop Read");
+		$("#btnStartStop").val("Stop Reading");
 		$.post(`/exe/ReadBlueDevBuffer`, {"ADR": bt.ADR}, (jobj) => {
 				$("#colRight").append(HtmlT.uartMsg(jobj));
 				bt.readerTimeout = setTimeout(bt.startReader, 800);
@@ -73,15 +77,20 @@ var bt = {
 	stopReader(){
 		$("#btnStartStop").attr("mode", "start");
 		$("#btnStartStop").css("color", "green");
-		$("#btnStartStop").val("Start Read");
+		$("#btnStartStop").val("Start Reading");
 		clearTimeout(bt.readerTimeout);
 	},
 	
 	checkBlueDev(){
 		let ondone = function(jobj){
-				console.load(jobj);
+				$("#blueDevScan .fb-box-a").html(jobj.returnVal);
 			};
 		$.post("/exe/CheckBlueDev", {"ADR": bt.ADR}, ondone);
+	},
+	
+	btnStartStopActive(){
+		$("#btnStartStop").removeClass("btn-off");
+		$("#btnStartStop").removeAttr("disabled");
 	}
 	
 };

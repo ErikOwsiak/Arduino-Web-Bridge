@@ -32,7 +32,7 @@ public class UartGateBuffer {
     }
 
     public void addUartMsg(String str) {
-        this.pushMsg(new UartMsg(new Date().getTime(), str));
+        this.pushMsg(new UartMsg(str));
         str = str.replace("'", "''");
         String qry = format("insert into uart_data values('%s', datetime());", str);
         this.sqLiteDatabase.execSQL(qry);

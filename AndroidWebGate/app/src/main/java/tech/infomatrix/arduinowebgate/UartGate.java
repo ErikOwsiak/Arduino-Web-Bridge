@@ -167,7 +167,8 @@ public class UartGate {
                         if (ch != '\n') {
                             chbuff[idx++] = ch;
                         } else {
-                            uartGateBuffer.addUartMsg(new String(chbuff, 0, --idx));
+                            String msg = new String(chbuff, 0, --idx);
+                            uartGateBuffer.addUartMsg();
                             Arrays.fill(chbuff, (char) 0);
                             idx = 0;
                         }
@@ -177,7 +178,6 @@ public class UartGate {
                             break;
                         }
                     }
-
 
                 } catch (IOException e) {
                     WebBox.appLog(e.toString());
@@ -196,6 +196,12 @@ public class UartGate {
                         WebBox.appLog(e.toString());
                     }
                 }
+            }
+
+            /* process msg; check for actions */
+            private void processMsg(String msg){
+
+
             }
 
         });

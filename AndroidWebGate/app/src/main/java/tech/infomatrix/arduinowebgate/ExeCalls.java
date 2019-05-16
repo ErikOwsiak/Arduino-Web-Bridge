@@ -40,19 +40,19 @@ public class ExeCalls {
         return true;
     }
 
-    public void StartBlueDev() {
+    public void ConnectBlueDev() {
         try {
             String mac = this.postDict.get("ADR").trim();
             /* todo: msg that it is running */
             if(UartGate.uartThreads.containsKey(mac)) {
-                this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderIsRunning");
+                this.callFeedback = new ExeCallFeedback(0, "OK", "Running");
                 return;
             }
             /* - - */
             Pair<OutputStream, InputStream> streams =
                     UartGate.uartGate.bluetoothStreamsFromMac(mac);
             UartGate.uartGate.startBluetoothReader(mac, streams.second);
-            this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderStarted");
+            this.callFeedback = new ExeCallFeedback(0, "OK", "Connected");
         } catch (NullPointerException e) {
             /* todo: try to recover */
             WebBox.appLog(e.toString());
@@ -63,7 +63,7 @@ public class ExeCalls {
         }
     }
 
-    public void StopBlueDev() throws IOException {
+    public void DisconnectBlueDev() throws IOException {
         String mac = this.postDict.get("ADR").trim();
         try {
             /* todo: msg that it is running */

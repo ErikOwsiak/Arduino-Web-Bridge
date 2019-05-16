@@ -1,13 +1,15 @@
 
 package tech.infomatrix.arduinowebgate;
 
+import java.util.Date;
+
 public class UartMsg {
 
     private long ts;
     private String msg;
 
-    public UartMsg(long ts, String msg){
-        this.ts = ts;
+    public UartMsg(String msg) {
+        this.ts = new Date().getTime();
         this.msg = msg;
     }
 

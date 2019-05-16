@@ -12,6 +12,11 @@
 	color: #6F6F6F;
 }
 
+.op-box-hdr i {
+	font-size: 4vh;
+	color: #C0C0C0;
+}
+
 .loading-data {
 	height: 8vh;
 	width: 80%;
@@ -80,11 +85,20 @@
 
 #blueDevScan input[type=button] {
 	height: 6vh;
-	width: 8vw;
+	width: 12vw;
 	font-size: 2.4vh;
 	margin: 2vh;
 	border-radius: 1vh;
 	border: 2px solid #403662;
+}
+
+.btn-off {
+	color: #dcdcdc !IMPORTANT;
+	border-color: #dcdcdc !IMPORTANT;
+}
+
+#blueDevScan input[type=button]:hover {
+	cursor: pointer;
 }
 
 #btnStartStop {
@@ -93,4 +107,10 @@
 
 #btnConnectDisconnect {
 	color: green;
+}
+
+#blueDevScan .fb-box-a {
+	font-size: 2vh !IMPORTANT;
+	text-align: center;
+	margin-top: 4vh;
 }
