@@ -22,10 +22,6 @@ public class RequestParser {
     static String HTTP_CODE_200 = "200 OK";
     static String CT_HTML = "text/html";
     static String CT_JSON = "text/json";
-    /*static String CT_CSS = "text/css";
-    static String CT_JPG = "image/jpeg";
-    static String CT_PNG = "image/png";
-    static String CT_JS = "text/javascript";*/
     static int CONTENT_LENGTH = 0;
 
     public List<String> requestHeaders;

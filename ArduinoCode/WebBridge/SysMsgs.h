@@ -12,10 +12,13 @@ class SysMsgs {
       const static byte TYPE_ADR = 2;
       
       /* c-tor */
-      SysMsgs();
+      void SysMsgs();
 
-      SendMsg(
-      
-   
-}
+
+   private:
+
+      void SomeCall();
+
+};
  
+#endif

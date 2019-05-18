@@ -6,10 +6,13 @@ a. call url
 URL 00\r\n
 ID 65000\r\n
 LEN len(LAOD)\r\n
-LOAD (max 128 chars)\r\n
+LOAD "max 128 chars"\r\n
 
 b. pass to other arduino
 
-ADR \r\n
-SEQ 65000\r\n
-LAOD 
+BLU "address"\r\n
+ID 65000\r\n
+LEN len(LAOD)\r\n
+LOAD "max 128 chars"\r\n
+ 
+SOME PAYLOAD GOES HERE

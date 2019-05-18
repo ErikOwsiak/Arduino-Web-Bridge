@@ -15,6 +15,7 @@ import android.os.ParcelUuid;
 import android.renderscript.Script;
 import android.util.Pair;
 import android.database.sqlite.*;
+import android.widget.MultiAutoCompleteTextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -168,7 +170,8 @@ public class UartGate {
                             chbuff[idx++] = ch;
                         } else {
                             String msg = new String(chbuff, 0, --idx);
-                            uartGateBuffer.addUartMsg();
+                            uartGateBuffer.addUartMsg(msg);
+                            this.processMsg(msg);
                             Arrays.fill(chbuff, (char) 0);
                             idx = 0;
                         }
@@ -199,9 +202,12 @@ public class UartGate {
             }
 
             /* process msg; check for actions */
-            private void processMsg(String msg){
-
-
+            private void processMsg(String msg) {
+                /*StringTokenizer stringTokenizer = new StringTokenizer(msg);*/
+                MsgProccessor msgProccessor = new MsgProccessor();
+                String[] msgbuff = msg.split(";");
+                if (msgbuff[0].startsWith("URL"))
+                    msgProccessor.callUrl(msgbuff);
             }
 
         });
