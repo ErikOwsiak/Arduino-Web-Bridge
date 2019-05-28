@@ -33,7 +33,7 @@ public class ExeCalls {
             Method method = this.getClass().getMethod(this.args[1]);
             method.invoke(this);
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             return false;
         }
         /* - - */
@@ -55,10 +55,10 @@ public class ExeCalls {
             this.callFeedback = new ExeCallFeedback(0, "OK", "Connected");
         } catch (NullPointerException e) {
             /* todo: try to recover */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.callFeedback = new ExeCallFeedback(1, "ERROR", e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.callFeedback = new ExeCallFeedback(1, "ERROR", e.toString());
         }
     }
@@ -84,9 +84,9 @@ public class ExeCalls {
                 this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderNotFound");
             }
         } catch (IOException e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
     }
 
@@ -111,7 +111,7 @@ public class ExeCalls {
                 this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderNotFound");
             }
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
     }
 
@@ -123,10 +123,10 @@ public class ExeCalls {
             this.callFeedback = new ExeCallFeedback(0, "OK", rval.toString());
         } catch (NullPointerException e) {
             /* todo: try to recover */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.callFeedback = new ExeCallFeedback(1, "ERROR", e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.callFeedback = new ExeCallFeedback(1, "ERROR", e.toString());
         }
     }

@@ -36,7 +36,7 @@ public class ApiCalls {
             Method method = this.getClass().getMethod(this.args[1]);
             method.invoke(this);
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             return false;
         }
         /* - - */
@@ -57,7 +57,7 @@ public class ApiCalls {
             this.apiCallFeedback = new ApiCallFeedback(0, "OK", "Sms Sent");
         } catch (Exception e) {
             this.apiExp = e;
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
     }
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.SocketException;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnStartStop;
     private TextView tvFeedback;
     private TextView tvIPAddress;
-    private WebBox webBox;
+    private WebGate webBox;
     private UartGate uartGate;
 
     @Override
@@ -52,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             /* - - */
-            WebBox.ctx = this.getApplicationContext();
-            this.webBox = new WebBox();
+            WebGate.ctx = this.getApplicationContext();
+            this.webBox = new WebGate();
 
             /* - - */
             UartGate.ctx = this.getApplicationContext();
@@ -102,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             this.webBox.startAdminServer();
             if (this.webBox.setLocalAddress())
-                this.tvIPAddress.setText(String.format("http://%s:%s/", WebBox.ipAddress, WebBox.adminPort));
-            this.btnStartStop.setText("Stop Admin Server");
+                this.tvIPAddress.setText(format("http://%s:%s/", WebGate.ipAddress, WebGate.adminPort));
+            this.btnStartStop.setText("Stop Server");
             /* refresh */
             v.invalidate();
         } catch (Exception e) {

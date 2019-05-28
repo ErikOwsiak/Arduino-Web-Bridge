@@ -2,42 +2,46 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-
     <TextView
         android:id="@+id/tvLbl0"
-        android:layout_width="320dp"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="16dp"
         android:layout_height="32dp"
-        android:text="Your Admin URL:"
-        android:textSize="18sp" />
+        android:text="Admin URL:"
+        android:textColor="#009688"
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/tvIPAddress"
-        android:layout_width="360dp"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="16dp"
         android:layout_height="32dp"
-        android:textSize="22sp"
-        android:text="" />
+        android:textSize="20sp"
+        android:text="XXX.XXX.XXX.XXX" />
 
     <TextView
         android:id="@+id/tvFeedback"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:layout_marginTop="16dp"
+        android:text="Stopped"
         android:textSize="32sp" />
 
     <Button
         android:id="@+id/btnStart"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="16dp"
         android:onClick="btnStartClick"
-        android:text="Start Admin Server"
-        android:textSize="24sp" />
+        android:text="Start Server"
+        android:textSize="32sp" />
 
 </LinearLayout>

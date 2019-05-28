@@ -58,7 +58,7 @@ public class WebBoxAdminThread implements Runnable {
             this.requestParser = new RequestParser(inBuff);
             this.requestParser.basicParse();
             if (this.requestParser.errorCount > 0)
-                WebBox.appLog("ParserErrors :(");
+                WebGate.appLog("ParserErrors :(");
 
             /* serve */
             if (this.requestParser.method.equals("GET")) {
@@ -100,13 +100,13 @@ public class WebBoxAdminThread implements Runnable {
         int dotpos = this.requestParser.requestFile.lastIndexOf(".");
         String fileExt = this.requestParser.requestFile.substring(dotpos);
         if (this.requestParser.requestFile.equals(RequestParser.IDX_FILE)) {
-            reqfile = new File(WebBox.appDir, "admin/idx.html");
+            reqfile = new File(WebGate.appDir, "admin/idx.html");
         } else if (fileExt.equals(".js")) {
-            reqfile = new File(WebBox.appDir, "admin/js/" + this.requestParser.requestFile);
+            reqfile = new File(WebGate.appDir, "admin/js/" + this.requestParser.requestFile);
         } else if (fileExt.equals(".css")) {
-            reqfile = new File(WebBox.appDir, "admin/css/" + this.requestParser.requestFile);
+            reqfile = new File(WebGate.appDir, "admin/css/" + this.requestParser.requestFile);
         } else if (".jpg.png.svg".contains(fileExt)) {
-            reqfile = new File(WebBox.appDir, "admin/imgs/" + this.requestParser.requestFile);
+            reqfile = new File(WebGate.appDir, "admin/imgs/" + this.requestParser.requestFile);
         } else {
             errcode = RequestParser.HTTP_ERROR_406;
         }
@@ -159,9 +159,9 @@ public class WebBoxAdminThread implements Runnable {
             /* the end */
             this.theEnd();
         } catch (NullPointerException e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
     }
 
@@ -186,12 +186,12 @@ public class WebBoxAdminThread implements Runnable {
         this.hdrBuffer.append(format("Date: %s\r\n", new Date().toString()));
         this.hdrBuffer.append(format("Content-type: %s\r\n", contype));
         this.hdrBuffer.append(format("Content-length: %s\r\n", contlen));
-        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebBox.devMaker));
-        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebBox.devModel));
+        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebGate.devMaker));
+        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebGate.devModel));
         this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
-                format("devMaker=%s;", WebBox.devMaker)));
+                format("devMaker=%s;", WebGate.devMaker)));
         this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
-                format(" devModel=%s;", WebBox.devModel)));
+                format(" devModel=%s;", WebGate.devModel)));
         /* headers - body spacer */
         this.hdrBuffer.append("\r\n");
         this.hdrBuffer.flush();
@@ -202,12 +202,12 @@ public class WebBoxAdminThread implements Runnable {
         this.hdrBuffer.append(format("HTTP/1.1 %s\r\n", RequestParser.HTTP_ERROR_500));
         this.hdrBuffer.append("Server: Arudino Web Gate v0.1\r\n");
         this.hdrBuffer.append(format("Date: %s\r\n", new Date().toString()));
-        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebBox.devMaker));
-        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebBox.devModel));
+        this.hdrBuffer.append(format("Device-Maker: %s\r\n", WebGate.devMaker));
+        this.hdrBuffer.append(format("Device-Model: %s\r\n", WebGate.devModel));
         this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
-                format("devMaker=%s;", WebBox.devMaker)));
+                format("devMaker=%s;", WebGate.devMaker)));
         this.hdrBuffer.append(format("Set-Cookie: %s\r\n",
-                format(" devModel=%s;", WebBox.devModel)));
+                format(" devModel=%s;", WebGate.devModel)));
         /* headers - body spacer */
         this.hdrBuffer.append("\r\n");
         this.hdrBuffer.flush();
@@ -258,7 +258,7 @@ public class WebBoxAdminThread implements Runnable {
             /* - - */
         } catch (Exception e) {
             /* todo: trace it */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } finally {
             /* give it last try */
             if ((this.reqSocket != null) && (!this.reqSocket.isClosed()))

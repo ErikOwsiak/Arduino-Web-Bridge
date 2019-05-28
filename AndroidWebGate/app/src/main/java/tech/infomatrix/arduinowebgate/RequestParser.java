@@ -46,7 +46,7 @@ public class RequestParser {
             String line = this.bufferedReader.readLine();
             while (line.length() > 0) {
                 this.requestHeaders.add(line);
-                WebBox.appLog(line);
+                WebGate.appLog(line);
                 line = this.bufferedReader.readLine();
                 if (line.toLowerCase().startsWith("content-length")) {
                     String strlen = line.split(":")[1].trim();
@@ -83,7 +83,7 @@ public class RequestParser {
 
 
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.errorCount++;
         }
     }
@@ -98,7 +98,7 @@ public class RequestParser {
                 this.postDict.put(kv[0], kv[1]);
             }
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
             this.postDict = null;
             this.errorCount++;
         }

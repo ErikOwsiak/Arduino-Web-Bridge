@@ -44,7 +44,7 @@ public class MsgProccessor {
                     }
 
                 } catch (Exception e) {
-                    WebBox.appLog(e.toString());
+                    WebGate.appLog(e.toString());
                 } finally {
                     urlConnection.disconnect();
                 }

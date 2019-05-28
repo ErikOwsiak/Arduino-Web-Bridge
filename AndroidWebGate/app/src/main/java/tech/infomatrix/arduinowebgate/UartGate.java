@@ -94,9 +94,9 @@ public class UartGate {
 
         } catch (NullPointerException e) {
             /* todo: try to recover */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
     }
 
@@ -109,7 +109,7 @@ public class UartGate {
 
             UUID uuid = UUID.fromString(UartGate.sppUUID);
             if (!BluetoothAdapter.checkBluetoothAddress(mac))
-                WebBox.appLog("BadMacAddress");
+                WebGate.appLog("BadMacAddress");
 
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(mac);
@@ -126,12 +126,12 @@ public class UartGate {
 
         } catch (NullPointerException e) {
             /* todo: try to recover */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } catch (IOException e) {
             /* todo: fix it; connect error; */
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
 
         /* - - */
@@ -183,11 +183,11 @@ public class UartGate {
                     }
 
                 } catch (IOException e) {
-                    WebBox.appLog(e.toString());
+                    WebGate.appLog(e.toString());
                 } catch (ThreadDeath e) {
-                    WebBox.appLog(e.toString());
+                    WebGate.appLog(e.toString());
                 } catch (Exception e) {
-                    WebBox.appLog(e.toString());
+                    WebGate.appLog(e.toString());
                 } finally {
                     /* make sure */
                     if (uartGateBuffer != null)
@@ -196,7 +196,7 @@ public class UartGate {
                         if (inputStream != null)
                             inputStream.close();
                     } catch (IOException e) {
-                        WebBox.appLog(e.toString());
+                        WebGate.appLog(e.toString());
                     }
                 }
             }

@@ -25,7 +25,7 @@ public class UartGateBuffer {
     public UartGateBuffer(String key, int maxsize) {
         this.name = key.replaceAll(":", "_") + ".db";
         this.maxsize = (maxsize == 0) ? 3600 : maxsize;
-        this.db = new File(WebBox.appDir, format("%s/%s", "data", this.name));
+        this.db = new File(WebGate.appDir, format("%s/%s", "data", this.name));
         this.msgs = new LinkedList<UartMsg>();
         this.tmpsize = 512;
         this.initStore();

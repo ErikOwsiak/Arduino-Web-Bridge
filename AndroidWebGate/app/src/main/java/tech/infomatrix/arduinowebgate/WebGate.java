@@ -25,7 +25,7 @@ import java.util.List;
 import static java.lang.System.out;
 
 
-public class WebBox {
+public class WebGate {
 
     final public static int adminPort = 8020;
     final public static String devMaker = Build.MANUFACTURER;
@@ -44,7 +44,7 @@ public class WebBox {
     private ServerSocket adminSocket;
 
 
-    public WebBox() {
+    public WebGate() {
     }
 
     public void startClientServer() {
@@ -52,16 +52,16 @@ public class WebBox {
 
     public void startAdminServer() {
         /* - - */
-        WebBox.adminThread = new Thread(new Runnable() {
+        WebGate.adminThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     /* - - */
-                    ServerSocket adminSocket = new ServerSocket(WebBox.adminPort);
-                    WifiManager wm = (WifiManager) WebBox.ctx.getSystemService(Context.WIFI_SERVICE);
+                    ServerSocket adminSocket = new ServerSocket(WebGate.adminPort);
+                    WifiManager wm = (WifiManager) WebGate.ctx.getSystemService(Context.WIFI_SERVICE);
                     String msg = "Admin server started.\n" +
                             "On IP: " + adminSocket.getInetAddress().getHostAddress() + "\n" +
-                            "On port : " + WebBox.adminPort + "\n" +
+                            "On port : " + WebGate.adminPort + "\n" +
                             "MAC: " + wm.getConnectionInfo().getMacAddress() + "\n";
                     /* - - */
                     while (true) {
@@ -79,11 +79,11 @@ public class WebBox {
             }
         });
         /* - - */
-        WebBox.adminThread.start();
+        WebGate.adminThread.start();
     }
 
     public Boolean isSetup() {
-        String fn = String.format("%s/%s/%s", WebBox.extDir, WebBox.appDirName, WebBox.appConfName);
+        String fn = String.format("%s/%s/%s", WebGate.extDir, WebGate.appDirName, WebGate.appConfName);
         return new File(fn).isFile();
     }
 
@@ -106,20 +106,20 @@ public class WebBox {
 
     private Boolean createAppFolders() {
         /* - - */
-        WebBox.appDir = new File(WebBox.extDir, WebBox.appDirName);
-        if (!WebBox.appDir.exists()) {
+        WebGate.appDir = new File(WebGate.extDir, WebGate.appDirName);
+        if (!WebGate.appDir.exists()) {
             out.println("creating app folders");
-            if (WebBox.appDir.mkdir()) {
-                out.println(WebBox.appDir + " : Created");
+            if (WebGate.appDir.mkdir()) {
+                out.println(WebGate.appDir + " : Created");
                 /* app dir */
                 String[] sdirs = {"admin", "js", "css", "exe", "data"};
                 for (String s : sdirs) {
-                    File f = new File(WebBox.appDir, s);
+                    File f = new File(WebGate.appDir, s);
                     if (f.mkdir())
                         f.setWritable(true);
                 }
                 /* admin dir */
-                File admin = new File(WebBox.appDir, "admin");
+                File admin = new File(WebGate.appDir, "admin");
                 String[] adirs = {"js", "css", "exe"};
                 for (String s : adirs) {
                     File f = new File(admin, s);
@@ -127,20 +127,20 @@ public class WebBox {
                         f.setWritable(true);
                 }
             } else {
-                out.println(WebBox.appDir.getPath() + " : NotCreated");
+                out.println(WebGate.appDir.getPath() + " : NotCreated");
             }
         } else {
-            out.println(WebBox.appDir.getPath() + " : Exists");
+            out.println(WebGate.appDir.getPath() + " : Exists");
         }
         /* - - */
-        return WebBox.appDir.exists();
+        return WebGate.appDir.exists();
     }
 
     private void writeConfFile() throws IOException {
         try {
-            File conf = new File(WebBox.appDir, "admin/app.conf");
+            File conf = new File(WebGate.appDir, "admin/app.conf");
             FileWriter fw = new FileWriter(conf, true);
-            fw.append("IsFakeSD: " + WebBox.isFakeSD + "\n");
+            fw.append("IsFakeSD: " + WebGate.isFakeSD + "\n");
             fw.append("DateCreated: " + new Date().toString());
             fw.close();
             if (conf.exists())
@@ -173,14 +173,14 @@ public class WebBox {
                     if (iad.isLoopbackAddress())
                         continue;
                     if (iad.isSiteLocalAddress()) {
-                        WebBox.ipAddress = iad.getHostAddress();
+                        WebGate.ipAddress = iad.getHostAddress();
                         rval = true;
                     }
                 }
             }
 
         } catch (Exception e) {
-            WebBox.appLog(e.toString());
+            WebGate.appLog(e.toString());
         }
 
         return rval;
