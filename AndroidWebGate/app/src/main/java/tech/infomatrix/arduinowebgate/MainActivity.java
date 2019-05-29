@@ -98,13 +98,13 @@ public class MainActivity extends AppCompatActivity {
     /* button click button */
     public void btnStartClick(View v) {
         /* - - */
-        this.tvFeedback.setText("Running...");
+        this.tvFeedback.setText("Running");
         /* start server */
         try {
             this.webBox.startAdminServer();
             if (this.webBox.setLocalAddress())
                 this.tvIPAddress.setText(format("http://%s:%s/", WebGate.ipAddress, WebGate.adminPort));
-            this.btnStartStop.setText("Stop Server");
+            this.btnStartStop.setText("Stop");
             /* refresh */
             v.invalidate();
         } catch (Exception e) {

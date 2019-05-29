@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:onClick="btnStartClick"
-        android:text="Start Server"
+        android:text="Start"
         android:textSize="32sp" />
 
 </LinearLayout>
