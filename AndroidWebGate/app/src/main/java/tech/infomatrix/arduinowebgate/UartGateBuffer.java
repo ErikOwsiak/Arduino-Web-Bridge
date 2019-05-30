@@ -14,6 +14,10 @@ import static java.lang.String.format;
 
 public class UartGateBuffer {
 
+    private static String tbl0 = "CREATE TABLE uart_data (buff TEXT, dts TEXT);";
+    private static String tbl1 = "CREATE TABLE urls_table (id INTEGER, url TEXT, dtc TEXT);";
+    private static String tbl2 = "CREATE TABLE sys_devices (id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " dev_type INTEGER, dtc TEXT);";
     private String name;
     private Queue<UartMsg> msgs;
     private int maxsize;
@@ -63,20 +67,29 @@ public class UartGateBuffer {
     }
 
     private void initStore() {
-        String tbl_name = "uart_data";
+
         SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(this.db, null);
-        String sqlstr = format("select count(name) from sqlite_master where" +
-                " type='table' and name='%s';", tbl_name);
+        String sqlstr = "select count(name) from sqlite_master where type='table' and" +
+                " name in ['uart_data', 'sys_devices', 'urls_table']";
         Cursor cursor = sqLiteDatabase.rawQuery(sqlstr, null);
         cursor.moveToFirst();
-        if (cursor.getInt(0) == 1) {
+
+        if (cursor.getInt(0) == 3) {
             cursor.close();
             this.sqLiteDatabase = sqLiteDatabase;
         } else {
-            sqlstr = format("CREATE TABLE %s (buff TEXT, dts TEXT);", tbl_name);
-            sqLiteDatabase.execSQL(sqlstr);
+            sqLiteDatabase.execSQL(UartGateBuffer.tbl0);
+            sqLiteDatabase.execSQL(UartGateBuffer.tbl1);
+            sqLiteDatabase.execSQL(UartGateBuffer.tbl2);
             this.sqLiteDatabase = sqLiteDatabase;
         }
+
+    }
+
+    public static boolean DatabaseExists(String adr){
+        String fn = adr.replaceAll(":", "_") + ".db";
+        File f = new File(WebGate.appDir, format("%s/%s", "data", fn));
+        return f.exists();
     }
 
 }

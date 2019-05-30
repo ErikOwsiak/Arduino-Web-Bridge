@@ -82,15 +82,23 @@ var bt = {
 	},
 	
 	checkBlueDev(){
-		let ondone = function(jobj){
+		/*let ondone = function(jobj){
 				$("#blueDevScan .fb-box-a").html(jobj.returnVal);
 			};
-		$.post("/exe/CheckBlueDev", {"ADR": bt.ADR}, ondone);
+		$.post("/exe/CheckBlueDev", {"ADR": bt.ADR}, ondone);*/
+		bt.hasDatabase();
 	},
 	
 	btnStartStopActive(){
 		$("#btnStartStop").removeClass("btn-off");
 		$("#btnStartStop").removeAttr("disabled");
+	},
+	
+	hasDatabase(){
+		let ondone = function(jobj){
+				console.log(jobj);
+			};
+		$.post("/exe/HasDatabase", {"ADR": bt.ADR}, ondone);
 	}
 	
 };

@@ -46,6 +46,7 @@
 .blue-dev-item:hover {
 	border-color: green;
 	cursor: pointer;
+	background-color: rgba(183,247,215, 0.50);
 }
 
 .blue-dev-item div:nth-child(1){

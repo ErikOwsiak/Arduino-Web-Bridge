@@ -7,9 +7,13 @@ class SysMsgs {
 
    public:
 
-      const static byte MAX_MSG_SIZE = 128;
+      const static byte MAX_MSG_SIZE = 108;
+      /* sends to web endpoint */
       const static byte TYPE_WEB = 1;
-      const static byte TYPE_ADR = 2;
+      /* sends to bluetooth dev */
+      const static byte TYPE_BTD = 2;
+      /* sends sms msg */
+      const static byte TYPE_SMS = 3;
       
       /* c-tor */
       void SysMsgs();

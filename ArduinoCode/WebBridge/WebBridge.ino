@@ -9,9 +9,10 @@ void loop() {
    delay(1000);                       
    digitalWrite(LED_BUILTIN, LOW);    
    delay(1000);   
-
+   
    // URL urlid;ID 23;LEN 3434;payload buffer\n
-   const char* msg = "URL 1;ID 5456;LEN 22;SOME PAYLOAD GOES HERE\n";
+   const char* msg = F("URL 1;ID 5456;LEN 22;SOME PAYLOAD GOES HERE\n");
+   
    Serial.print(msg);
   
 }

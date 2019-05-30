@@ -44,7 +44,7 @@ public class ExeCalls {
         try {
             String mac = this.postDict.get("ADR").trim();
             /* todo: msg that it is running */
-            if(UartGate.uartThreads.containsKey(mac)) {
+            if (UartGate.uartThreads.containsKey(mac)) {
                 this.callFeedback = new ExeCallFeedback(0, "OK", "Running");
                 return;
             }
@@ -106,7 +106,7 @@ public class ExeCalls {
                 UartGate.bluetoothSockets.remove(mac);
                 UartGate.uartInBuffers.remove(mac);
                 String rval = String.format("ReaderIs%s%s", isalive, isconn);
-                this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderIs");
+                this.callFeedback = new ExeCallFeedback(0, "OK", rval);
             } else {
                 this.callFeedback = new ExeCallFeedback(0, "OK", "ReaderNotFound");
             }
@@ -117,7 +117,9 @@ public class ExeCalls {
 
     public void ReadBlueDevBuffer() {
         try {
-            String mac = this.postDict.get("ADR").trim();
+            String mac = this.postDict.get("ADR");
+            if (mac != null)
+                mac = mac.trim();
             UartGateBuffer uartGateBuffer = UartGate.uartInBuffers.get(mac);
             UartMsg rval = uartGateBuffer.read();
             this.callFeedback = new ExeCallFeedback(0, "OK", rval.toString());
@@ -128,6 +130,20 @@ public class ExeCalls {
         } catch (Exception e) {
             WebGate.appLog(e.toString());
             this.callFeedback = new ExeCallFeedback(1, "ERROR", e.toString());
+        }
+    }
+
+    public void HasDatabase() {
+        try {
+            String mac = this.postDict.get("ADR");
+            assert mac != null;
+            mac = mac.trim();
+            String rval = (UartGateBuffer.DatabaseExists(mac)) ? "Found" : "NotFound";
+            this.callFeedback = new ExeCallFeedback(0, "OK", rval);
+        } catch (NullPointerException e) {
+            WebGate.appLog(e.toString());
+        } catch (Exception e) {
+            WebGate.appLog(e.toString());
         }
     }
 
